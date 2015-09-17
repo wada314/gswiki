@@ -14,17 +14,14 @@ class Parser:
 
     def __init__(self, raw, request, filename=None, format_args='', **kw):
         self.request = request
-        self.entry_name = format_args
-        if not self.entry_name:
-            self.json_obj = '#!json requires the entry name.'
-            return
         try:
             self.json_obj = json.loads(raw)
         except Exception as e:
             self.json_obj = 'Something wrong in JSON data: %s' % e
-    
+
     def format(self, formatter, **kw):
         if isinstance(formatter, HTMLFormatter):
-            self.request.write(formatter.rawHTML('<u>html output of json! %s</u>' % self.entry_name))
+            self.request.write(formatter.rawHTML(u'<u>html output of json!</u><br>%s' 
+                                                 % json.dumps(self.json_obj, ensure_ascii=False)))
         else:
             self.request.write(formatter.text('[placeholder of json]'))
