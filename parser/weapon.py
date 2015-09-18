@@ -22,19 +22,11 @@ class Parser(_json.Parser):
             self._create_row(j, row, level, formatter,
                 subtrigger_in_row=True, subweapon_in_row=True, **kw)
             table.rows.append(row)
-        # df_utils.adjust_rowsizes(rows)
-        # df_utils.reduce_rows(rows)
-        # title_row = df_utils.extract_title_row(rows)
-        # rows = [title_row] + rows
-        # return df_utils.wikirows_to_str(
-        #     [df_utils.row_to_wikirows(row) for row in rows])
 
     def _create_row(self, j, row, level, formatter, **kw):
         """
         @keyword subtrigger_in_row True to put subtrigger effect into 備考
         @keyword subweapon_in_row True to put subweapon name into 備考
-        @keyword request give a request if this row should return html format,
-                 not wiki format text (like link).
         """
         weapon = j.get(u'レベル', {}).get(u'%d' % level)
         if not weapon:
