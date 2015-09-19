@@ -39,4 +39,8 @@ class Parser:
         self.request.redirectedOutput(
             Page.send_page_content, page, self.request, page.data, 'wiki')
 
-        return extracting_formatter.get_extracted()
+        json_text = extracting_formatter.get_extracted()
+        if not json_text:
+            return None
+        else:
+            return json.loads(json_text)

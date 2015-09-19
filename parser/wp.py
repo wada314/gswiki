@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import math
+import json
 
 import _json
 from _table import _Table, _Row, _Cell
@@ -27,7 +28,10 @@ class Parser(_json.Parser):
             level = weapon_name.get(u'レベル', 0)
             #row, subrow = self._get_leveled_weapon_and_subweapon_rows(
             #    formatter, name, level)
-        self.request.write(formatter.text(self.load_json_from_page(u'ビームガン', u'weapon')))
+        j = self.load_json_from_page(u'ビームガン', u'weapon')
+        self.request.write(formatter.preformatted(True) 
+                           + formatter.text(json.dumps(j, ensure_ascii=False, indent=2))
+                           + formatter.preformatted(False))
 
     def _get_leveled_weapon_and_subweapon_rows(self, formatter, name, level):
         pass
