@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-    @copyright: 2008 Radomir Dopieralski <moindev@sheep.art.pl>
     @license: GNU GPL, see COPYING for details.
 """
 

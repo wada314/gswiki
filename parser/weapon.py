@@ -10,7 +10,8 @@ class Parser(_json.Parser):
         j = self.json_obj
         table = _Table()
         self._create_table(j, table, formatter, **kw)
-        self.request.write(formatter.text(u'弾種: %s' % j[u'弾種'])
+        self.request.write(formatter.linebreak(preformatted=False)
+                           + formatter.text(u'弾種: %s' % j[u'弾種'])
                            + table.format(formatter))
 
     def _create_table(self, j, table, formatter, **kw):
