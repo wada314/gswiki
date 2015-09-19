@@ -25,8 +25,9 @@ class Parser(_json.Parser):
         for place_name, weapon_name in zip(place_names, weapon_names):
             name = weapon_name.get(u'名称', u'unknown')
             level = weapon_name.get(u'レベル', 0)
-            row, subrow = self._get_leveled_weapon_and_subweapon_rows(
-                formatter, name, level)
+            #row, subrow = self._get_leveled_weapon_and_subweapon_rows(
+            #    formatter, name, level)
+        self.request.write(formatter.text(self.load_json_from_page(u'ビームガン', u'weapon')))
 
     def _get_leveled_weapon_and_subweapon_rows(self, formatter, name, level):
-        
+        pass
