@@ -9,26 +9,29 @@ class Parser(_json.Parser):
     def format(self, formatter, **kw):
         j = self.json_obj
         table = _Table()
-        self._create_table(j, table, formatter, **kw)
+        self.create_table(table, formatter, **kw)
         self.request.write(formatter.linebreak(preformatted=False)
                            + formatter.text(u'弾種: %s' % j[u'弾種'])
                            + table.format(formatter))
 
-    def _create_table(self, j, table, formatter, **kw):
+    def create_table(self, table, formatter, **kw):
+        j = self.json_obj
         levels = list(j.get(u'レベル', {}).iteritems())
         levels.sort()
         for (level, weapon) in levels:
             level = int(level)
             row = _Row()
-            self._create_row(j, row, level, formatter,
+            self.create_row(row, level, formatter,
                 subtrigger_in_row=True, subweapon_in_row=True, **kw)
             table.rows.append(row)
 
-    def _create_row(self, j, row, level, formatter, **kw):
+    def create_row(self, row, level, formatter, **kw):
         """
         @keyword subtrigger_in_row True to put subtrigger effect into 備考
         @keyword subweapon_in_row True to put subweapon name into 備考
+        @keyword show_name True to add weapon name at the top of the row
         """
+        j = self.json_obj
         weapon = j.get(u'レベル', {}).get(u'%d' % level)
         if not weapon:
             return
@@ -38,6 +41,9 @@ class Parser(_json.Parser):
                 key = key.lstrip(u'_')
             key_trimmed_weapon.append((key, value))
         weapon = dict(key_trimmed_weapon)
+
+        if kw.get('show_name', False):
+            row.cells.append(_Cell(u'武装名', j.get(u'名称'), {u'class':u'center,hc'}))
 
         row.cells.append(_Cell(u'ﾚﾍﾞﾙ', u'Lv.%d' % level, {u'class':u'right'}))
 

@@ -28,7 +28,7 @@ class Parser:
         else:
             self.request.write(formatter.text('[placeholder of json]'))
 
-    def load_json_from_page(self, page_name, parser_name):
+    def load_json_text_from_page(self, page_name, parser_name):
         formatterClass = wikiutil.searchAndImportPlugin(
             self.request.cfg, 'formatter', 'extracting_formatter')
         extracting_formatter = formatterClass(parser_name, self.request)
@@ -39,7 +39,10 @@ class Parser:
         self.request.redirectedOutput(
             Page.send_page_content, page, self.request, page.data, 'wiki')
 
-        json_text = extracting_formatter.get_extracted()
+        return extracting_formatter.get_extracted()
+
+    def load_json_from_page(self, page_name, parser_name):
+        json_text = load_json_text_from_page(page_name, parser_name)
         if not json_text:
             return None
         else:
