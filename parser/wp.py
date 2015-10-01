@@ -46,11 +46,12 @@ class Parser(_json.Parser):
         subrow.cells.append(_Cell(u'装備箇所', u'サブ', {u'class':u'center,hc'}))
 
         leveled_weapon = weapon_parser.json_obj.get(u'レベル', {}).get(u'%d' % level, {})
+        print(json.dumps(leveled_weapon, ensure_ascii=False))
         if u'_サブウェポン' in leveled_weapon:
             subweapon = leveled_weapon[u'_サブウェポン']
             subname = subweapon[u'名称']
             sublevel = subweapon[u'レベル']
-            subweapon_parser = weapon.Parser(self.load_json_text_from_page(subname, u'weapon'))
+            subweapon_parser = weapon.Parser(self.load_json_text_from_page(subname, u'weapon'), self.request)
             subweapon_parser.create_row(subrow, sublevel, formatter,
                                         subweapon_in_row=False, subtrigger_in_row=False,
                                         show_name=True)
