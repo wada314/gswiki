@@ -57,7 +57,7 @@ class Parser(_json.Parser):
                                         show_name=True)
             return row, subrow
         elif u'_サブトリガー' in leveled_weapon:
-            subrow.cells.append(_Cell(u'武装名', u'(サブ)', {u'class':u'center'}))
+            subrow.cells.append(_Cell(u'武装名', u'(サブトリガー)', {u'class':u'center'}))
             # fill empty columns so that this row does not be shorter than the other rows
             subrow.cells.extend([_Cell()] * 20)
             return row, subrow
