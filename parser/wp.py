@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import itertools
 import math
 import json
 
@@ -32,6 +33,7 @@ class Parser(_json.Parser):
             if subrow:
                 table.rows.append(subrow)
         text += table.format(formatter)
+        text += self._get_tune_rows(formatter)
         self.request.write(text)
 
     def _get_leveled_weapon_and_subweapon_rows(self, formatter, name, level, place_name):
@@ -63,3 +65,46 @@ class Parser(_json.Parser):
             return row, subrow
         else:
             return row, None
+
+    def _get_tune_rows(self, formatter):
+        j = self.json_obj
+        tunes = j[u'チューン']
+        text = formatter.table(True)
+        # header row
+        text += formatter.table_row(True, {u'rowclass': u'header'})
+        for header in [u'チューンLv', u'名称', u'メリット', u'デメリット']:
+            text += (formatter.table_cell(True) 
+                     + formatter.text(header) 
+                     + formatter.table_cell(False))
+        text += formatter.table_row(False)
+        for i in map(lambda x: u'%d' % x, [2, 3, 4]):
+            if i not in tunes:
+                break
+            tune = tunes[i]
+
+            # align the size of merits and demerits
+            merits = tune[u'メリット']
+            demerits = tune[u'デメリット']
+            merits_len = max(len(merits), len(demerits))
+            merits += [u''] * (merits_len - len(merits))
+            demerits += [u''] * (merits_len - len(demerits))
+
+            for (j, (merit, demerit)) in enumerate(zip(merits, demerits)):
+                text += formatter.table_row(True)
+
+                if j == 0:
+                    for cell in [i, tune[u'名称']]:
+                        text += formatter.table_cell(True, attrs={u'rowspan': u'%d' % merits_len})
+                        text += formatter.text(cell)
+                        text += formatter.table_cell(False)
+                else:
+                    pass
+                
+                for cell in [merit, demerit]:
+                    text += formatter.table_cell(True)
+                    text += formatter.text(cell)
+                    text += formatter.table_cell(False)
+
+                text += formatter.table_row(False)
+        text += formatter.table(False)
+        return text
