@@ -12,5 +12,12 @@ class Parser(_json.Parser):
         title = (formatter.heading(True, 2)
                  + formatter.text(u'キャラクター性能')
                  + formatter.heading(False, 2))
-        self.request.write(title)
+        fight = (formatter.table(True)
+                 + formatter.table_row(True, {u'rowclass':u'header'})
+                 + formatter.table_cell(True) + formatter.text(u'種類') + formatter.table_cell(False)
+                 + formatter.table_cell(True) + formatter.text(u'威力') + formatter.table_cell(False)
+                 + formatter.table_cell(True) + formatter.text(u'解説') + formatter.table_cell(False)
+                 + formatter.table_row(False))
+        fight += formatter.table(False)
+        self.request.write(title + fight)
         
