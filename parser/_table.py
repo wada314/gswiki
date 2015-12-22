@@ -65,7 +65,7 @@ class _Table:
                 if not cell:
                     continue
                 if cell.title == column_title:
-                    del cell.title
+                    cell.title = None
         title_row.cells = [_Cell(title=None, text=title) for title in column_titles]
         return title_row
 
@@ -75,9 +75,37 @@ class _Row:
         self.is_header = is_header
 
     def format(self, formatter):
-        return (formatter.table_row(True, {u'rowclass': u'header'} if self.is_header else {})
-                + u'\n'.join([(cell or _Cell()).format(formatter) for cell in self.cells])
-                + formatter.table_row(False))
+        body_cells = []
+        text = u''
+        if (not self.is_header) and any(map(lambda c: c and c.title, self.cells)):
+            # create subheader row
+            sh_cells = []
+            for cell in self.cells:
+                if not cell:
+                    cell = _Cell()
+                if cell.title:
+                    sh_cells.append(_Cell(text=cell.title, attrs={u'class': u'subheader'}))
+                    cell.title = None
+                    body_cells.append(cell)
+                else:
+                    cell.attrs[u'rowspan'] = u'2'
+                    sh_cells.append(cell)
+                    body_cells.append(None)
+            
+            text += formatter.table_row(True)
+            for cell in sh_cells:
+                text += u'\n' + cell.format(formatter)
+            text += formatter.table_row(False)
+
+        else:
+            body_cells = [(c or _Cell()) for c in self.cells]
+
+        text += formatter.table_row(True, {u'rowclass': u'header'} if self.is_header else {})
+        for cell in body_cells:
+            if cell:
+                text += u'\n' + cell.format(formatter)
+        text += formatter.table_row(False)
+        return text
         
 class _Cell:
     def __init__(self, title=None, text=None, attrs={}, formatted=False):
