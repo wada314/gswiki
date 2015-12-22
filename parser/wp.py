@@ -33,7 +33,7 @@ class Parser(_json.Parser):
             if subrow:
                 table.rows.append(subrow)
         text += table.format(formatter)
-        text += self._get_tune_rows(formatter)
+        text += self._get_tune_table(formatter)
         self.request.write(text)
 
     def _get_leveled_weapon_and_subweapon_rows(self, formatter, name, level, place_name):
@@ -48,7 +48,6 @@ class Parser(_json.Parser):
         subrow.cells.append(_Cell(u'装備箇所', u'サブ', {u'class':u'center,hc'}))
 
         leveled_weapon = weapon_parser.json_obj.get(u'レベル', {}).get(u'%d' % level, {})
-        print(json.dumps(leveled_weapon, ensure_ascii=False))
         if u'_サブウェポン' in leveled_weapon:
             subweapon = leveled_weapon[u'_サブウェポン']
             subname = subweapon[u'名称']
@@ -66,10 +65,11 @@ class Parser(_json.Parser):
         else:
             return row, None
 
-    def _get_tune_rows(self, formatter):
+    def _get_tune_table(self, formatter):
         j = self.json_obj
         tunes = j[u'チューン']
-        text = formatter.table(True)
+        text = u''
+        text += formatter.table(True)
         # header row
         text += formatter.table_row(True, {u'rowclass': u'header'})
         for header in [u'チューンLv', u'名称', u'メリット', u'デメリット']:

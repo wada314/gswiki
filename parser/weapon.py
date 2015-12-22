@@ -43,7 +43,13 @@ class Parser(_json.Parser):
         weapon = dict(key_trimmed_weapon)
 
         if kw.get('show_name', False):
-            row.cells.append(_Cell(u'武装名', j.get(u'名称'), {u'class':u'center,hc'}))
+            name = j.get(u'名称')
+            row.cells.append(_Cell(
+                u'武装名',
+                formatter.pagelink(True, name) + formatter.text(name) + formatter.pagelink(False),
+                {u'class':u'center,hc'},
+                formatted=True
+            ))
 
         row.cells.append(_Cell(u'ﾚﾍﾞﾙ', u'Lv.%d' % level, {u'class':u'right'}))
 
