@@ -70,37 +70,34 @@ class _Table:
         return title_row
 
 class _Row:
-    def __init__(self, is_header=False):
-        self.cells = []
-        self.is_header = is_header
+    def __init__(self, cells=[]):
+        self.cells = cells
+
+    def toHtmlRows(self):
+        cell_pairs = [cell.toHtmlCells() for cell in self.cells]
+        titles, texts = zip(*cell_pairs)
+        texts = filter(None, texts)
+        return [_HtmlRow(titles), _HtmlRow(texts)]
+
+class _TitleRow:
+    def __init__(self, cells=[]):
+        self.cells = cells
+
+    def toHtmlRow(self):
+        cells = [cell.toHtmlCell() for cell in self.cells]
+        return _HtmlRow(cells)
+
+class _HtmlRow:
+    def __init__(self, cells, cls=[], attrs={}):
+        self.cells = cells
+        self.cls = cls
+        self.attrs = attrs
 
     def format(self, formatter):
-        body_cells = []
         text = u''
-        if (not self.is_header) and any(map(lambda c: c and c.title, self.cells)):
-            # create subheader row
-            sh_cells = []
-            for cell in self.cells:
-                if not cell:
-                    cell = _Cell()
-                if cell.title:
-                    sh_cells.append(_Cell(text=cell.title, attrs={u'class': u'subheader'}))
-                    cell.title = None
-                    body_cells.append(cell)
-                else:
-                    cell.attrs[u'rowspan'] = u'2'
-                    sh_cells.append(cell)
-                    body_cells.append(None)
-            
-            text += formatter.table_row(True)
-            for cell in sh_cells:
-                text += u'\n' + cell.format(formatter)
-            text += formatter.table_row(False)
-
-        else:
-            body_cells = [(c or _Cell()) for c in self.cells]
-
-        text += formatter.table_row(True, {u'rowclass': u'header'} if self.is_header else {})
+        attrs = dict(self.attrs)
+        attrs[u'rowclass'] = u' '.join(self.cls)
+        text += formatter.table_row(True, attrs)
         for cell in body_cells:
             if cell:
                 text += u'\n' + cell.format(formatter)
@@ -108,13 +105,49 @@ class _Row:
         return text
         
 class _Cell:
-    def __init__(self, title=None, text=None, attrs={}, formatted=False):
+    def __init__(self, title=None, text=None, cls=[], attrs={}, formatted=False):
         self.title = title
         self.text = text
+        self.cls = cls
+        self.attrs = attrs
+        self.formatted = formatted
+
+    def toHtmlCells(self):
+        """
+        returns (_HtmlCell, _HtmlCell).
+        """
+        if self.title:
+            title_cell = _HtmlCell(self.title, self.cls + [u'subheader'],
+                                   self.attrs, False)
+            text_cell = _HtmlCell(self.text, self.cls, self.attrs, self.formatted)
+            return (title_cell, text_cell)
+        else:
+            attrs = dict(self.attrs)
+            attrs[u'rowspan'] = u'2'
+            cell= _HtmlCell(self.text, self.cls, attrs, self.formatted)
+            return (cell, None)
+
+class _TitleCell:
+    def __init__(self, text=None, cls=[], attrs={}, formatted=False):
+        self.text = text
+        self.cls = cls
+        self.attrs = attrs
+        self.formatted = formatted
+
+    def toHtmlCell(self)
+        return _HtmlCell(self.text, self.cls + [u'header'],
+                         self.attrs, self.formatted)
+
+class _HtmlCell:
+    def __init__(self, text=None, cls=[], attrs={}, formatted=False):
+        self.text = text
+        self.cls = cls
         self.attrs = attrs
         self.formatted = formatted
 
     def format(self, formatter):
-        return (formatter.table_cell(True, self.attrs)
+        attrs = dict(self.attrs)
+        attrs['class'] = u' '.join(self.cls)
+        return (formatter.table_cell(True, attrs)
                 + (self.text if self.formatted else formatter.text(self.text))
                 + formatter.table_cell(False))
