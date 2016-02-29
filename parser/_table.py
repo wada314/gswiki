@@ -31,47 +31,72 @@ class _Table:
     def __init__(self):
         self.rows = []
 
-    def format(self, formatter):
-        self._remove_empty_columns()
-        self.rows = [self._extract_title_row()] + self.rows
-        return (formatter.table(True)
-                + u'\n'.join([row.format(formatter) for row in self.rows])
-                + formatter.table(False))
+    def toHtmlTable(self):
+        rows = [_Row(r.cells) for r in self.rows]
+        self._remove_empty_columns(rows)
+        title_row = self._extract_title_row(rows)
+        html_rows = []
+        html_rows.append(title_row.toHtmlRow())
+        for row in rows:
+            html_rows.extend(row.toHtmlRows())
+        return _HtmlTable(html_rows)
 
-    def _remove_empty_columns(self):
-        col_num = min([len(row.cells) for row in self.rows])
+    @staticmethod
+    def _remove_empty_columns(rows):
+        """
+        param rows might be modified to remove the empty columns.
+        """
+        col_num = min([len(row.cells) for row in rows])
         is_empty = [True] * col_num
-        for row in self.rows:
+        for row in rows:
             for i, cell in enumerate(row.cells):
                 is_empty[i] = is_empty[i] and not (cell and cell.text)
-        for row in self.rows:
+        for row in rows:
             newcells = []
             for i, cell in enumerate(row.cells):
                 if not is_empty[i]:
                     newcells.append(cell)
             row.cells = newcells
 
-    def _extract_title_row(self):
-        title_row = _Row(is_header=True)
-        col_num = min([len(row.cells) for row in self.rows])
+    @staticmethod
+    def _extract_title_row(rows):
+        """
+        returns a newly generated title row of the table.
+        param rows might be modified to remove the title of each cells.
+        """
+        title_row = _TitleRow()
+        col_num = min([len(row.cells) for row in rows])
         column_title_lists = [[] for _ in range(col_num)]
-        for row in self.rows:
+        for row in rows:
             for i, cell in enumerate(row.cells):
                 if cell and cell.title:
                     column_title_lists[i].append(cell.title)
         column_titles = [min(titles, key=_json_name_priority) for titles in column_title_lists]
-        for row in self.rows:
+        for row in rows:
             for column_title, cell in zip(column_titles, row.cells):
                 if not cell:
                     continue
                 if cell.title == column_title:
                     cell.title = None
-        title_row.cells = [_Cell(title=None, text=title) for title in column_titles]
+        title_row.cells = [_TitleCell(text=title) for title in column_titles]
         return title_row
+
+class _HtmlTable:
+    def __init__(self, rows, cls=[], attrs={}):
+        self.rows = list(rows)
+        self.cls = cls or []
+        self.attrs = attrs or {}
+
+    def format(self, formatter):
+        attrs = dict(self.attrs)
+        attrs[u'tableclass'] = u' '.join(self.cls)
+        return (formatter.table(True, attrs)
+                + u'\n'.join([row.format(formatter) for row in self.rows])
+                + formatter.table(False))
 
 class _Row:
     def __init__(self, cells=[]):
-        self.cells = cells
+        self.cells = [cell or _Cell() for cell in cells]
 
     def toHtmlRows(self):
         cell_pairs = [cell.toHtmlCells() for cell in self.cells]
@@ -81,7 +106,7 @@ class _Row:
 
 class _TitleRow:
     def __init__(self, cells=[]):
-        self.cells = cells
+        self.cells = list(cells)
 
     def toHtmlRow(self):
         cells = [cell.toHtmlCell() for cell in self.cells]
@@ -89,16 +114,16 @@ class _TitleRow:
 
 class _HtmlRow:
     def __init__(self, cells, cls=[], attrs={}):
-        self.cells = cells
-        self.cls = cls
-        self.attrs = attrs
+        self.cells = list(cells)
+        self.cls = list(cls)
+        self.attrs = dict(attrs)
 
     def format(self, formatter):
         text = u''
         attrs = dict(self.attrs)
         attrs[u'rowclass'] = u' '.join(self.cls)
         text += formatter.table_row(True, attrs)
-        for cell in body_cells:
+        for cell in self.cells:
             if cell:
                 text += u'\n' + cell.format(formatter)
         text += formatter.table_row(False)
@@ -108,8 +133,8 @@ class _Cell:
     def __init__(self, title=None, text=None, cls=[], attrs={}, formatted=False):
         self.title = title
         self.text = text
-        self.cls = cls
-        self.attrs = attrs
+        self.cls = list(cls)
+        self.attrs = dict(attrs)
         self.formatted = formatted
 
     def toHtmlCells(self):
@@ -130,19 +155,19 @@ class _Cell:
 class _TitleCell:
     def __init__(self, text=None, cls=[], attrs={}, formatted=False):
         self.text = text
-        self.cls = cls
-        self.attrs = attrs
+        self.cls = list(cls)
+        self.attrs = dict(attrs)
         self.formatted = formatted
 
-    def toHtmlCell(self)
+    def toHtmlCell(self):
         return _HtmlCell(self.text, self.cls + [u'header'],
                          self.attrs, self.formatted)
 
 class _HtmlCell:
     def __init__(self, text=None, cls=[], attrs={}, formatted=False):
         self.text = text
-        self.cls = cls
-        self.attrs = attrs
+        self.cls = list(cls)
+        self.attrs = dict(attrs)
         self.formatted = formatted
 
     def format(self, formatter):

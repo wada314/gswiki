@@ -32,7 +32,8 @@ class Parser(_json.Parser):
             table.rows.append(row)
             if subrow:
                 table.rows.append(subrow)
-        text += table.format(formatter)
+        html_table = table.toHtmlTable()
+        text += html_table.format(formatter)
         text += self._get_tune_table(formatter)
         self.request.write(text)
 
@@ -40,12 +41,12 @@ class Parser(_json.Parser):
         json_text = self.load_json_text_from_page(name, u'weapon')
         weapon_parser = weapon.Parser(json_text, self.request)
         row = _Row()
-        row.cells.append(_Cell(u'装備箇所', place_name, {u'class':u'center,hc'}))
+        row.cells.append(_Cell(u'装備箇所', place_name, cls=['center','hc']))
         weapon_parser.create_row(row, level, formatter,
                                  subweapon_in_row=False, subtrigger_in_row=False,
                                  show_name=True)
         subrow = _Row()
-        subrow.cells.append(_Cell(u'装備箇所', u'サブ', {u'class':u'center,hc'}))
+        subrow.cells.append(_Cell(u'装備箇所', u'サブ', cls=[u'center','hc']))
 
         leveled_weapon = weapon_parser.json_obj.get(u'レベル', {}).get(u'%d' % level, {})
         if u'_サブウェポン' in leveled_weapon:
@@ -58,7 +59,7 @@ class Parser(_json.Parser):
                                         show_name=True)
             return row, subrow
         elif u'_サブトリガー' in leveled_weapon:
-            subrow.cells.append(_Cell(u'武装名', u'(サブトリガー)', {u'class':u'center'}))
+            subrow.cells.append(_Cell(u'武装名', u'(サブトリガー)', cls=[u'center']))
             # fill empty columns so that this row does not be shorter than the other rows
             subrow.cells.extend([_Cell()] * 20)
             return row, subrow
@@ -71,7 +72,7 @@ class Parser(_json.Parser):
         text = u''
         text += formatter.table(True)
         # header row
-        text += formatter.table_row(True, {u'rowclass': u'header'})
+        text += formatter.table_row(True, {u'class':u'header'})
         for header in [u'チューンLv', u'名称', u'メリット', u'デメリット']:
             text += (formatter.table_cell(True) 
                      + formatter.text(header) 
