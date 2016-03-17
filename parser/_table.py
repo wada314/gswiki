@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+import copy
+
 _JSON_NAME_ORDER = [
     u'名称', u'弾種', u'レベル',
     u'格闘', u'N格', u'上格', u'左格', u'右格', u'下格', u'威力', u'解説',
@@ -31,15 +33,26 @@ class _Table:
     def __init__(self):
         self.rows = []
 
-    def toHtmlTable(self):
-        rows = [_Row(r.cells) for r in self.rows]
+    def toHtmlTable(self, **kw):
+        rows = copy.deepcopy(self.rows)
+        self.debug_print_rows(rows)
         self._remove_empty_columns(rows)
-        title_row = self._extract_title_row(rows)
+        self.debug_print_rows(rows)
         html_rows = []
-        html_rows.append(title_row.toHtmlRow())
+        if kw.get('generate_header', True):
+            title_row = self._extract_title_row(rows)
+            html_rows.append(title_row.toHtmlRow())
+        else:
+            for row in rows:
+                for cell in row.cells:
+                    cell.title = None
         for row in rows:
             html_rows.extend(row.toHtmlRows())
         return _HtmlTable(html_rows)
+
+    def debug_print_rows(self, rows):
+        for row in rows:
+            print u', '.join([c.text if c else 'None' for c in row.cells])
 
     @staticmethod
     def _remove_empty_columns(rows):
@@ -99,7 +112,8 @@ class _Row:
         self.cells = [cell or _Cell() for cell in cells]
 
     def toHtmlRows(self):
-        cell_pairs = [cell.toHtmlCells() for cell in self.cells]
+        cell_pairs = [cell.toHtmlCells() if cell else _Cell.getEmptyHtmlCells()
+                      for cell in self.cells]
         titles, texts = zip(*cell_pairs)
         texts = filter(None, texts)
         return [_HtmlRow(titles), _HtmlRow(texts)]
@@ -151,6 +165,12 @@ class _Cell:
             attrs[u'rowspan'] = u'2'
             cell= _HtmlCell(self.text, self.cls, attrs, self.formatted)
             return (cell, None)
+
+    @staticmethod
+    def getEmptyHtmlCells():
+        attrs = { u'rowspan': u'2' }
+        cell= _HtmlCell(attrs=attrs)
+        return (cell, None)
 
 class _TitleCell:
     def __init__(self, text=None, cls=[], attrs={}, formatted=False):
