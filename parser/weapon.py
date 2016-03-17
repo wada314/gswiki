@@ -66,7 +66,8 @@ class Parser(_json.Parser):
             power = u'%d' % weapon[u'攻撃力(爆風)']
             if u'分裂数' in weapon:
                 power += u'x%d' % weapon[u'分裂数']
-            row.cells.append(_Cell(u'攻撃力(爆風)', power, cls=[u'right']))
+            # We don't need "(爆風)" annotation in display, isn't it?
+            row.cells.append(_Cell(u'攻撃力', power, cls=[u'right']))
         elif u'回復力' in weapon:
             row.cells.append(_Cell(u'回復力', u'%d' % weapon[u'回復力'], cls=[u'right']))
         elif u'防御力' in weapon:
@@ -127,20 +128,22 @@ class Parser(_json.Parser):
         else:
             row.cells.append(None)
 
-        if u'リロード分子' in weapon and u'リロード分母' in weapon and u'装填数' in weapon:
-            if weapon[u'リロード分子'] == u'all':
-                row.cells.append(_Cell(u'ﾘﾛｰﾄﾞ時間',
-                            u'%dF' % weapon[u'リロード分母'],
-                            cls=[u'right']))
-            else:
-                reload_num = int(math.ceil(
-                        float(weapon[u'装填数']) 
-                        / float(weapon[u'リロード分子'])))
-                row.cells.append(_Cell(u'ﾘﾛｰﾄﾞ時間', 
-                            u'%dF' % (reload_num * int(weapon[u'リロード分母'])),
-                            cls=[u'right']))
-        else:
-            row.cells.append(None)
+        ### I think this column was not much useful, and it's title was space wasting,
+        ### so commenting out it for now.
+        # if u'リロード分子' in weapon and u'リロード分母' in weapon and u'装填数' in weapon:
+        #     if weapon[u'リロード分子'] == u'all':
+        #         row.cells.append(_Cell(u'ﾘﾛｰﾄﾞ時間',
+        #                     u'%dF' % weapon[u'リロード分母'],
+        #                     cls=[u'right']))
+        #     else:
+        #         reload_num = int(math.ceil(
+        #                 float(weapon[u'装填数']) 
+        #                 / float(weapon[u'リロード分子'])))
+        #         row.cells.append(_Cell(u'ﾘﾛｰﾄﾞ時間', 
+        #                     u'%dF' % (reload_num * int(weapon[u'リロード分母'])),
+        #                     cls=[u'right']))
+        # else:
+        #     row.cells.append(None)
 
         if u'射程距離' in weapon:
             row.cells.append(_Cell(u'射程', u'%dm' % weapon[u'射程距離'], cls=[u'right']))
@@ -163,12 +166,6 @@ class Parser(_json.Parser):
         notes = []
         if u'備考' in weapon:
             notes.append(formatter.text(weapon[u'備考']))
-        if u'三点バースト' in weapon:
-            notes.append(formatter.text(u'三点バースト'))
-        if u'状態異常' in weapon:
-            notes.append(formatter.text(weapon[u'状態異常']))
-        if u'チャージ' in weapon:
-            notes.append(formatter.text(u'チャージ'))
         if kw.get('subweapon_in_row', False) and u'サブウェポン' in weapon:
             subweapon = weapon[u'サブウェポン']
             note = (formatter.text(u'サブ: ')
