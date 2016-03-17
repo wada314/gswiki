@@ -39,5 +39,3 @@ class Parser(_json.Parser):
             table.rows.append(row)
         
         return table
-        
-        
