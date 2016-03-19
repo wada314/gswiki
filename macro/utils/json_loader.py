@@ -1,7 +1,6 @@
 
 import json
 
-from MoinMoin.formatter.text_html import Formatter as HTMLFormatter
 from MoinMoin.Page import Page
 from MoinMoin import wikiutil
 

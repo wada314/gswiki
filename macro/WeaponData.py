@@ -19,7 +19,12 @@ def macro_WeaponData(macro, _trailing_args=[]):
     else:
         raise NotImplementedError()
 
+    return create_weapon_data(request, formatter, requested_weapons)
+
+def create_weapon_data(request, formatter, requested_weapons):
     j = load_json_from_page(request, requested_weapons[0], u'weapon')
+    if not j:
+        return u'No weapon data'
     table = Table()
     create_table(j, table, formatter)
     html_table = table.toHtmlTable()

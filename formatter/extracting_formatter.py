@@ -6,6 +6,9 @@
 from MoinMoin.formatter import text_html
 
 class Formatter(text_html.Formatter):
+    """A formatter to extract json data part from the given page.
+    """
+
     def __init__(self, extracting_parser_name, request):
         text_html.Formatter.__init__(self, request)
         self.extracting_parser_name = extracting_parser_name
@@ -26,3 +29,9 @@ class Formatter(text_html.Formatter):
 
     def get_extracted(self):
         return self.extracted
+
+    def macro(self, macro_obj, name, args, markup=None):
+        """We need to ignore macro to avoid recursive call when this formatter
+        is triggered from a macro.
+        """
+        return u''

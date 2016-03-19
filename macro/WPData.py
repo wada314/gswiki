@@ -19,8 +19,12 @@ def macro_WPData(macro, _trailing_args=[]):
         pass
     else:
         raise NotImplementedError()
+    return create_wp_data(request, formatter, requested_wps)
 
-    j = load_json_from_page(request, requested_wps[0], u'wp')
+def create_wp_data(request, formatter, requested_wps):
+    j = load_json_from_page(request, requested_wps[0], u'wp')   
+    if not j:
+        return u'no wp data'
     table = Table()
 
     text = formatter.linebreak(preformatted=False)
