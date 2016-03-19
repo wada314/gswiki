@@ -8,6 +8,7 @@ Dependencies = ['pages']
 def macro_WeaponData(macro, _trailing_args=[]):
     request = macro.request
     formatter = macro.formatter
+
     requested_weapons = _trailing_args
     if not requested_weapons:
         # assume the caller requested to show a weapon data of the current page.
@@ -20,23 +21,23 @@ def macro_WeaponData(macro, _trailing_args=[]):
 
     j = load_json_from_page(request, requested_weapons[0], u'weapon')
     table = Table()
-    _create_table(j, table, formatter)
+    create_table(j, table, formatter)
     html_table = table.toHtmlTable()
     return (formatter.linebreak(preformatted=False)
             + formatter.text(u'弾種: %s' % j[u'弾種'])
             + html_table.format(formatter))
 
-def _create_table(j, table, formatter, **kw):
+def create_table(j, table, formatter, **kw):
     levels = list(j.get(u'レベル', {}).iteritems())
     levels.sort()
     for (level, weapon) in levels:
         level = int(level)
         row = Row()
-        _create_row(j, row, level, formatter,
+        create_row(j, row, level, formatter,
             subtrigger_in_row=True, subweapon_in_row=True, **kw)
         table.rows.append(row)
 
-def _create_row(j, row, level, formatter, **kw):
+def create_row(j, row, level, formatter, **kw):
     """
     @keyword subtrigger_in_row True to put subtrigger effect into 備考
     @keyword subweapon_in_row True to put subweapon name into 備考
