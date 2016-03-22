@@ -1,5 +1,6 @@
 # gswiki
 MoinMoin wiki plugin for GS3
+
 *Since GS3 is Japan-local game, I'm not considering for i18n this project. All UI strings are hard-coded in the source file.*
 
 # INSTALL
