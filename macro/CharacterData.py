@@ -41,7 +41,7 @@ def create_grapple_table(j):
         row = Row()
         row.cells.append(Cell(u'種類', grapple_type))
         row.cells.append(Cell(u'威力', unicode(grapple.get(u'威力', u'???'))))
-        row.cells.append(Cell(u'威力', unicode(grapple.get(u'解説', u''))))
+        row.cells.append(Cell(u'解説', unicode(grapple.get(u'解説', u''))))
         table.rows.append(row)
 
     return table
