@@ -1,13 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-import itertools
-import math
-import json
-
-import _json, weapon
-from _table import _Table, _Row, _Cell
-from MoinMoin.Page import Page
-
 class Parser:
     Dependencies = []
 
