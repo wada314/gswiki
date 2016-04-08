@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    MoinMoin - gs2mobile theme
+    MoinMoin - gs3mobile theme
 
     @copyright: 2003-2005 Nir Soffer, Thomas Waldmann
     @license: GNU GPL, see COPYING for details.
@@ -13,7 +13,7 @@ from StringIO import StringIO
 
 class Theme(ThemeBase):
 
-    name = "gs2mobile"
+    name = "gs3mobile"
 
     def header(self, d, **kw):
         """ Assemble wiki header
@@ -75,7 +75,7 @@ class Theme(ThemeBase):
 <link rel="shortcut icon" href="%(link)s" type="image/vnd.microsoft.icon" />
 <link rel="icon" href="%(link)s" type="image/vnd.microsoft.icon" />
 ''' % {u'link': self.cfg.url_prefix_static + 
-       u'/gs2mobile/img/gs2logo_bullet_favicon.png'}
+       u'/gs3mobile/img/gs2logo_bullet_favicon.png'}
 
     def editorheader(self, d, **kw):
         """ Assemble wiki header for editor
