@@ -22,7 +22,7 @@ def macro_WPData(macro, _trailing_args=[]):
     return create_wp_data(request, formatter, requested_wps)
 
 def create_wp_data(request, formatter, requested_wps):
-    j = load_json_from_page(request, requested_wps[0], u'wp')   
+    j = load_json_from_page(request, requested_wps[0], u'wp')
     if not j:
         return u'no wp data'
     table = Table()
@@ -74,7 +74,7 @@ def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, pl
     elif u'_サブトリガー' in leveled_weapon:
         subrow.cells.append(Cell(u'武装名', u'(サブトリガー)', cls=[u'center']))
         # fill empty columns so that this row does not be shorter than the other rows
-        subrow.cells.extend([Cell()] * 20)
+        subrow.cells.extend([Cell()] * (len(row.cells) - 2))
         return row, subrow
     else:
         return row, None

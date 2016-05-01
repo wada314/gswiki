@@ -34,6 +34,9 @@ class Table:
     def __init__(self):
         self.rows = []
 
+    def __unicode__(self):
+        return '\n'.join([unicode(r) for r in self.rows])
+
     def toHtmlTable(self, **kw):
         rows = copy.deepcopy(self.rows)
         self._remove_empty_columns(rows)
@@ -106,6 +109,9 @@ class Row:
     def __init__(self, cells=[]):
         self.cells = [cell or Cell() for cell in cells]
 
+    def __unicode__(self):
+        return ('%d:[' % len(self.cells)) + ', '.join([unicode(c) for c in self.cells]) + ']'
+
     def toHtmlRows(self):
         cell_pairs = [cell.toHtmlCells() if cell else Cell.getEmptyHtmlCells()
                       for cell in self.cells]
@@ -145,6 +151,9 @@ class Cell:
         self.cls = list(cls)
         self.attrs = dict(attrs)
         self.formatted = formatted
+
+    def __unicode__(self):
+        return '(%s/%s)' % (self.title or self.title, self.text or self.text)
 
     def toHtmlCells(self):
         """
