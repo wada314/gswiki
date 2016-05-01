@@ -58,14 +58,15 @@ h1 {
 
 h2 {
     font-weight: bold;
-    font-size: 1.4em;
-    padding: 0.2em 0 0.2em 0.5em;
+    font-size: 1.3em;
+    padding: 0.3em 0 0.3em 0em;
     margin: 0 0 1em 0;
+    text-align: center;
 }
 h2, h2 a:link, h2 a:visited {
     font-family:verdana, arial, helvetica, Sans-Serif;
     color:white;
-    background-color:#666;
+    background-color:#0068b2;
     border:0px;
 }
 
@@ -73,11 +74,11 @@ h3 {
     font-weight: normal;
     padding: 0.3em 0 0.2em 1em;
     text-shadow: 0 1px 0 white;
-    background-color: #a6dea6;
     border-bottom: 1px solid #666;
 }
 h3, h3 a:link, h3 a:visited {
-    color: black;
+    background-image: linear-gradient(to right,#002d5c,#0095ff);
+    color: white;
 }
 
 h4 {

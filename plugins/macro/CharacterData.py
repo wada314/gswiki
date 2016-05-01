@@ -23,9 +23,9 @@ def create_character_data(request, formatter, character_name):
     return title + create_desc(j, formatter)
 
 def create_desc(j, formatter):
-    grapple_title = (formatter.heading(True, 2)
+    grapple_title = (formatter.heading(True, 3)
              + formatter.text(u'格闘性能')
-             + formatter.heading(False, 2))
+             + formatter.heading(False, 3))
     grapple_title
 
     grapple_table = create_grapple_table(j).toHtmlTable()
