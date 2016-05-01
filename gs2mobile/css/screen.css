@@ -1,0 +1,432 @@
+/*  screen.css - GS1 Mobile Site like Styles
+
+Copyright (c) 2014 by wada314
+*/
+
+/* content styles */
+
+/* debug 
+* {border: 1px dotted blue;}
+*/
+
+body {
+    padding: 0;
+    border: 0;
+}
+
+textarea {
+    font-size: 1em;
+    font-family: monospace;
+}
+
+/* user interface styles */
+#header {
+    padding:1em 0 0 1em;
+    margin:0px;
+
+    /* from: http://www.css3factory.com/linear-gradients/ */
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, #000DC4),
+        color-stop(0.34, #4AE8F0),
+        color-stop(0.66, #C7FFFF),
+        color-stop(1, #FFFFFF)
+    );
+    background-image: -o-linear-gradient(bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
+    background-image: -moz-linear-gradient(bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
+    background-image: -webkit-linear-gradient(bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
+    background-image: -ms-linear-gradient(bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
+    background-image: linear-gradient(to bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
+    text-align: center;
+    min-height: 4em;
+}
+
+#sidebar {
+    float: left;
+    left: 0;
+    width: 14em;
+    height: auto;
+}
+#sidebar h1, #sidebar h2, #sidebar h3, #sidebar h4, #sidebar h5, #sidebar h6, #sidebar h7 {
+    font-size: 90%;
+    margin-bottom: 0;
+    margin-left: 4px;
+    margin-right: 6px;
+}
+
+#page {
+    margin-left: 14em;
+}
+
+#footer {
+    clear: both;
+    margin: 0;
+    padding: 0;
+}
+
+#locationline {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+#interwiki a {
+    font-family:verdana, arial, helvetica, Sans-Serif;
+    display: block;
+    font-size: 2em;
+    font-weight:bold;
+    color: white;
+    text-shadow: 0.1em 0.1em 0.3em #0878C0;
+    background-color:transparent;
+    padding: 0.1em 0 0 0;
+    border: 0px;
+    margin: 0.1em 0 0 0;
+    text-decoration: none;
+}
+#interwiki a:before, #interwiki a:after {
+    background-image: url("../img/gs2logo_bullet.svg");
+    background-size: 2em 2em;
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    content: "";
+    position: relative;
+    top: 1em;
+    margin-top: -1em;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+}
+
+#pagelocation {
+    display: inline;
+    height: 100%;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+    font-family: sans-serif;
+    text-shadow: 0.1em 0.1em 0.3em #0878C0;
+}
+
+#username {
+    float: right;
+    overflow: visible;
+    margin: 5px 12px;
+    padding: 0;
+    text-align: right;
+    font-size: 0.82em;
+    white-space: nowrap;
+}
+*[dir="rtl"] #username {
+    float: left;
+    text-align: left;
+    margin: 5px 0px;
+}
+#username li {
+    display: inline;
+    padding: 0 0.5em 0 0;
+}
+
+#searchform {
+    float: right;
+    margin-right: 0.2em;
+    padding: 0;
+    white-space: nowrap;
+    font-size: 0.82em;
+}
+
+*[dir="rtl"] #searchform {
+    float: left;
+}
+
+#searchform form div {
+    display: inline;
+}
+
+#pagetrail {
+    text-align: left;
+    overflow: hidden;
+    margin: 5px 12px;
+    padding: 0;
+    font-size: 0.88em;
+}
+*[dir="rtl"] #pagetrail {
+    text-align: right;
+}
+
+#pagetrail li, #pagelocation li {
+    display: inline;
+    margin: 0;
+}
+
+/* XXX Warning: non-ascii characters! */
+#pagetrail li:after {
+    content: " » ";
+}
+
+*[dir="rtl"] #pagetrail li:after {
+    content: " « ";
+}
+
+#pagetrail li:last-child:after {
+    content: "";
+}
+
+#pagelocation li:after {
+    content: "/ ";
+}
+
+*[dir="rtl"] #pagelocation li:after {
+    content: " \\ "; /* TODO: check what looks best with RTL */
+}
+
+#pagelocation li:last-child:after {
+    content: "";
+}
+
+.editbar {
+    text-align: left;
+    display: block;
+    margin: 0;
+    padding: 0 8px;
+    font-size: 0.8em;
+}
+*[dir="rtl"] .editbar {
+    text-align: right;
+}
+
+.editbar form, .editbar form div {
+    display: inline;
+    margin: 0;
+}
+
+.editbar li {
+    display: inline;
+    padding: 0;
+    margin: 4px 6px;
+}
+
+*[dir="rtl"] .editbar li {
+    float: right;
+}
+
+#header .editbar {
+    border-bottom: 1px dotted #9C9C9C;
+}
+
+#footer .editbar {
+    border-top: 1px dotted #9C9C9C;
+    border-bottom: 1px solid #9C9C9C;
+}
+
+.editbar a, .editbar a:visited { color: #0044B3; }
+
+#message {
+    clear: both;
+    margin: 0;
+    padding: 5px 10px;
+    border-bottom: 1px solid #c9c9c9;
+    background: #E6EAF0;
+}
+
+#message p {
+    margin: 5px 0;
+    padding: 0;
+    /* font-weight: bold; */
+}
+
+#message div.buttons {
+    font-weight: normal;
+}
+
+.dialog form {
+    margin: 0 15px;
+}
+
+.dialog td {
+    border: none;
+    padding: 5px;
+}
+
+.dialog td.label {
+    text-align: right;
+    font-weight: bold;
+    width: 25%;
+}
+
+*[dir="rtl"] .dialog td.label {
+    text-align: left;
+}
+
+.dialog td.content input {
+    width: 100%;
+}
+
+.include-edit-link {
+    float: right;
+    font-size: 0.8em;
+}
+*[dir="rtl"] .include-edit-link {
+    float: left;
+}
+a.include-edit-link-inheader:link {
+    font-size: 0.6em;
+}
+
+/* We use here dumb css1 ids because of IE suckiness */
+#editor-textarea, #editor-help {
+    font-family: monospace;
+    border: 1px solid #8cacbb;  
+    color: black;
+    background-color: white;
+    padding: 3px;
+    width: 100%;
+    margin-top: 0.5em;
+}
+
+#editor-help {
+    font-size: small;
+    background-color: #EEEEFF;
+}
+
+#editor-comment {
+    font-size: 100%;
+    border: 1px solid #8cacbb;
+    color: black;
+    background-color: white;
+    vertical-align: middle;
+    padding: 1px;
+    display: inline;
+    width: 70%;
+}
+
+#preview, #previewbelow {
+    border: 1px solid #6C7680;
+    padding: 3px;
+    width: 100%;
+    background: url(../img/draft.png);
+    margin-top: 0.5em;
+}
+
+#textcha {
+    font-size: 100%;
+    margin-top: 0.5em;
+    border: 2px solid #FF8888;
+    color: black;
+    vertical-align: middle;
+    padding: 3px 2px;
+}
+
+#textcha-answer {
+    border: 2px solid #000000;
+    padding: 3px 2px;
+}
+
+input.button {
+    /*
+    border: 1px solid #8cacbb;  
+    color: black;
+    background-color: #CCCCCC;
+    vertical-align: middle;
+    text-decoration: none;
+    font-size: 100%;
+    cursor: pointer;
+    margin: 2px;
+    padding: 1px;
+    display: inline;
+    */
+}
+
+#credits, #version, #timings{
+    margin: 5px 10px;
+    padding: 0;
+    text-align: center;
+    font-size: 0.88em;
+    color: #6C7680;
+}
+
+#credits li, #timings li {
+    display: inline;
+    padding: 0 2px;
+    margin: 0 4px;
+}
+
+#credits img {
+    vertical-align: middle;
+}
+
+.diff {
+    width:99%;
+    table-layout: fixed;
+}
+
+.diff-header {
+    font-weight: bold;
+}
+
+.diff-title {
+    background-color: #C0C0C0;
+}
+
+.diff-added {
+    background-color: #E0FFE0;
+    vertical-align: top;
+    width: 50%;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: courier, monospace;
+}
+
+.diff-removed {
+    background-color: #FFFFE0;
+    vertical-align: top;
+    width: 50%;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: courier, monospace;
+}
+
+.diff-added span {
+    background-color: #80FF80;
+}
+
+.diff-removed span {
+    background-color: #FFFF80;
+}
+
+td.diff-info {
+    vertical-align: top;
+}
+
+div.diff-info {
+    white-space: nowrap;
+}
+
+div.diff-info-rev-comment span.diff-info-value {
+    white-space: normal;
+}
+
+div.diff-info-header {
+    background-color: #E8E8E8;
+    width: 100%;
+    padding: 0.25em 0.5em;
+    margin: -0.25em -0.5em;
+    margin-bottom: 0.25em;
+    text-align: center;
+}
+
+td.diff-same {
+    text-align: center;
+    border: 0;
+}
+
+table.navigation {
+    float: right;
+    margin: 2px;
+}
+
+#openididentifier {
+    background: url(../../common/openid.png) no-repeat;
+    background-position: 0 50%;
+    padding-left: 18px;
+}
