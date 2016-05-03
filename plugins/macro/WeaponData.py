@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from utils.table import Table, Row, Cell
-from utils.json_loader import load_json_from_page
+from utils.json_loader import load_json_from_page, load_all_jsons
 
 Dependencies = ['pages']
 
@@ -19,34 +19,63 @@ def macro_WeaponData(macro, _trailing_args=[]):
     else:
         raise NotImplementedError()
 
-    return create_weapon_data(request, formatter, requested_weapons)
+    return create_weapon_data(request, formatter, requested_weapons,
+                              show_wp_owners=True)
 
-def create_weapon_data(request, formatter, requested_weapons):
+def get_weapon_owner_wps(request, weapon, level):
+    j = load_all_jsons(request)
+    # The weapon may be owned as a subtrigger of other weapons.
+    # List up all weapons has the weapon as subtrigger (or as main trigger)
+    weapons = set()
+    weapons.add((weapon, level))
+    for w in j.get(u'weapons', []):
+        for l, leveled_weapon in w.get(u'レベル', {}).iteritems():
+            l = int(l)
+            subw = leveled_weapon.get(u'_サブウェポン', None)
+            if not subw:
+                continue
+            if subw.get(u'名称', u'') == weapon and subw.get(u'レベル', -1) == level:
+                weapons.add((w.get(u'名称', u''), l))
+
+    wps = []
+    for wp in j.get(u'wps', []):
+        for equip_name in [u'右手武器', u'左手武器',
+                           u'サイド武器', u'タンデム武器']:
+            w = wp.get(equip_name, {})
+            item = (w.get(u'名称', u''), w.get(u'レベル', -1))
+            if item in weapons:
+                wps.append(wp.get(u'名称', u'BadWPName'))
+                break
+
+    return wps
+
+def create_weapon_data(request, formatter, requested_weapons, **kw):
     j = load_json_from_page(request, requested_weapons[0], u'weapon')
     if not j:
         return u'No weapon data'
     table = Table()
-    create_table(j, table, formatter)
+    create_table(request, j, table, formatter, **kw)
     html_table = table.toHtmlTable()
     return (formatter.linebreak(preformatted=False)
             + formatter.text(u'弾種: %s' % j[u'弾種'])
             + html_table.format(formatter))
 
-def create_table(j, table, formatter, **kw):
+def create_table(request, j, table, formatter, **kw):
     levels = list(j.get(u'レベル', {}).iteritems())
     levels.sort()
     for (level, weapon) in levels:
         level = int(level)
         row = Row()
-        create_row(j, row, level, formatter,
+        create_row(request, j, row, level, formatter,
             subtrigger_in_row=True, subweapon_in_row=True, **kw)
         table.rows.append(row)
 
-def create_row(j, row, level, formatter, **kw):
+def create_row(request, j, row, level, formatter, **kw):
     """
     @keyword subtrigger_in_row True to put subtrigger effect into 備考
     @keyword subweapon_in_row True to put subweapon name into 備考
     @keyword show_name True to add weapon name at the top of the row
+    @keyword show_wp_owners True to show wp owners list
     """
     weapon = j.get(u'レベル', {}).get(u'%d' % level)
     if not weapon:
@@ -59,7 +88,7 @@ def create_row(j, row, level, formatter, **kw):
     weapon = dict(key_trimmed_weapon)
 
     if kw.get('show_name', False):
-        name = j.get(u'名称')
+        name = j.get(u'名称', u'')
         row.cells.append(Cell(
             u'武装名',
             formatter.pagelink(True, name) + formatter.text(name) + formatter.pagelink(False),
@@ -196,3 +225,14 @@ def create_row(j, row, level, formatter, **kw):
     else:
         row.cells.append(None)
 
+    if kw.get('show_wp_owners', False):
+        owner_names = get_weapon_owner_wps(request, j.get(u'名称', u''), level)
+        lines = []
+        for owner in owner_names:
+            line = u''
+            line += formatter.pagelink(True, owner)
+            line += formatter.text(owner) 
+            line += formatter.pagelink(False)
+            lines.append(line)
+        owners_text = formatter.linebreak(preformatted=False).join(lines)
+        row.cells.append(Cell(u'所有WP', owners_text, cls=[u'center'], formatted=True))

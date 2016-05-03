@@ -55,7 +55,7 @@ def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, pl
     weapon_json = load_json_from_page(request, name, u'weapon')
     row = Row()
     row.cells.append(Cell(u'装備箇所', place_name, cls=['center','hc']))
-    WeaponData.create_row(weapon_json, row, level, formatter,
+    WeaponData.create_row(request, weapon_json, row, level, formatter,
                           subweapon_in_row=False, subtrigger_in_row=False,
                           show_name=True)
     subrow = Row()
@@ -67,7 +67,7 @@ def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, pl
         subname = subweapon[u'名称']
         sublevel = subweapon[u'レベル']
         subweapon_json = load_json_from_page(request, subname, u'weapon')
-        WeaponData.create_row(subweapon_json, subrow, sublevel, formatter,
+        WeaponData.create_row(request, subweapon_json, subrow, sublevel, formatter,
                               subweapon_in_row=False, subtrigger_in_row=False,
                               show_name=True)
         return row, subrow
@@ -106,7 +106,7 @@ def get_tune_table(j, formatter):
             text += formatter.table_row(True)
 
             if j == 0:
-                for cell in [i, tune[u'名称']]:
+                for cell in [i, tune.get(u'名称', u'???')]:
                     text += formatter.table_cell(True, attrs={u'rowspan': u'%d' % merits_len})
                     text += formatter.text(cell)
                     text += formatter.table_cell(False)

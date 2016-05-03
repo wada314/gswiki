@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import json
+import os
 
 from MoinMoin.Page import Page
 from MoinMoin import caching, wikiutil
@@ -24,19 +25,20 @@ def load_json_text_from_page(request, page_name, parser_name):
 
 def _load_all_jsons(request):
     character_names = load_json_from_page(request, u'CharacterList', u'characters')
-    wp_names = Set()
-    weapon_names = Set()
+    wp_names = set()
+    weapon_names = set()
     weapon_name_queue = []
 
     characters = []
     wps = []
     weapons = []
 
-    if not character_names or isinstance(character_names, List):
+    if not character_names or not isinstance(character_names, list):
         return None
 
     for c_name in character_names:
-        c_name = unicode(c) if c else u'BadCharacterName'  # make sure to be an unicode object
+        # make sure to be an unicode object
+        c_name = unicode(c_name) if c_name else u'BadCharacterName'
         c = load_json_from_page(request, c_name, u'character')
         characters.append(c)
         wp_names.update(c.get(u'ウェポンパック', []))
@@ -50,11 +52,11 @@ def _load_all_jsons(request):
             weapon_name = wp.get(equip_name, {}).get(u'名称', u'')
             weapon_names.add(weapon_name)
 
-    weapon_name_queue = List(weapon_names)
+    weapon_name_queue = list(weapon_names)
     while weapon_name_queue:
         w_name = weapon_name_queue.pop()
         w_name = unicode(w_name) if w_name else u'BadWeaponName'
-        weapon = load_json_from_page(request, weapon_name, u'weapon')
+        weapon = load_json_from_page(request, w_name, u'weapon')
 
         for leveled_weapon in weapon.get(u'レベル', {}).itervalues():
             if u'_サブウェポン' in leveled_weapon:
@@ -71,12 +73,10 @@ def load_json_from_page(request, page_name, parser_name):
         request, 'gswiki-pagejson', _json_key(page_name, parser_name), 'wiki',
         use_pickle=True)
     if cache.needsUpdate(Page(request, page_name)._text_filename()):
-        print 'updating page json cache %s' % page_name
         json_text = load_json_text_from_page(request, page_name, parser_name)
         j = json.loads(json_text)
         cache.update(j)
     else:
-        print 'using page json cache %s' % page_name
         j = cache.content()
 
     return j or None
@@ -86,11 +86,9 @@ def load_all_jsons(request):
         request, 'gswiki-alljsons', 'json', 'wiki',
         use_pickle=True)
     if cache.needsUpdate(os.path.join(request.cfg.data_dir, 'edit-log')):
-        print 'updating all json cache'
         j = _load_all_jsons(request)
         cache.update(j)
     else:
-        print 'using all json cache'
         j = cache.content()
 
     return j
