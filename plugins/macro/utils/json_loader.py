@@ -1,8 +1,13 @@
+# -*- encoding: utf-8 -*-
 
 import json
 
 from MoinMoin.Page import Page
-from MoinMoin import wikiutil
+from MoinMoin import caching, wikiutil
+
+def _json_key(page_name, parser_name):
+    # This is a bit vulnerable, but I believe it's not a big problem...
+    return u'%s#%s' % (page_name, parser_name)
 
 def load_json_text_from_page(request, page_name, parser_name):
     formatterClass = wikiutil.searchAndImportPlugin(
@@ -17,9 +22,75 @@ def load_json_text_from_page(request, page_name, parser_name):
 
     return extracting_formatter.get_extracted()
 
-def load_json_from_page(request, page_name, parser_name):
-    json_text = load_json_text_from_page(request, page_name, parser_name)
-    if not json_text:
+def _load_all_jsons(request):
+    character_names = load_json_from_page(request, u'CharacterList', u'characters')
+    wp_names = Set()
+    weapon_names = Set()
+    weapon_name_queue = []
+
+    characters = []
+    wps = []
+    weapons = []
+
+    if not character_names or isinstance(character_names, List):
         return None
+
+    for c_name in character_names:
+        c_name = unicode(c) if c else u'BadCharacterName'  # make sure to be an unicode object
+        c = load_json_from_page(request, c_name, u'character')
+        characters.append(c)
+        wp_names.update(c.get(u'ウェポンパック', []))
+
+    for wp_name in wp_names:
+        wp_name = unicode(wp_name) if wp_name else u'BadWPName'
+        wp = load_json_from_page(request, wp_name, u'wp')
+        wps.append(wp)
+        for equip_name in [u'右手武器', u'左手武器',
+                           u'サイド武器', u'タンデム武器']:
+            weapon_name = wp.get(equip_name, {}).get(u'名称', u'')
+            weapon_names.add(weapon_name)
+
+    weapon_name_queue = List(weapon_names)
+    while weapon_name_queue:
+        w_name = weapon_name_queue.pop()
+        w_name = unicode(w_name) if w_name else u'BadWeaponName'
+        weapon = load_json_from_page(request, weapon_name, u'weapon')
+
+        for leveled_weapon in weapon.get(u'レベル', {}).itervalues():
+            if u'_サブウェポン' in leveled_weapon:
+                subweapon_name = leveled_weapon.get(u'サブウェポン', {}).get(u'名称', u'')
+                if subweapon_name and subweapon_name not in weapon_names:
+                    weapon_names.add(subweapon_name)
+                    weapon_name_queue.push(subweapon_name)
+        weapons.append(weapon)
+
+    return {u'characters': characters, u'wps': wps, u'weapons': weapons}
+
+def load_json_from_page(request, page_name, parser_name):
+    cache = caching.CacheEntry(
+        request, 'gswiki-pagejson', _json_key(page_name, parser_name), 'wiki',
+        use_pickle=True)
+    if cache.needsUpdate(Page(request, page_name)._text_filename()):
+        print 'updating page json cache %s' % page_name
+        json_text = load_json_text_from_page(request, page_name, parser_name)
+        j = json.loads(json_text)
+        cache.update(j)
     else:
-        return json.loads(json_text)
+        print 'using page json cache %s' % page_name
+        j = cache.content()
+
+    return j or None
+
+def load_all_jsons(request):
+    cache = caching.CacheEntry(
+        request, 'gswiki-alljsons', 'json', 'wiki',
+        use_pickle=True)
+    if cache.needsUpdate(os.path.join(request.cfg.data_dir, 'edit-log')):
+        print 'updating all json cache'
+        j = _load_all_jsons(request)
+        cache.update(j)
+    else:
+        print 'using all json cache'
+        j = cache.content()
+
+    return j
