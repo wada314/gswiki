@@ -106,8 +106,9 @@ class HtmlTable:
                 + formatter.table(False))
 
 class Row:
-    def __init__(self, cells=[]):
+    def __init__(self, cells=[], cls=[]):
         self.cells = [cell or Cell() for cell in cells]
+        self.cls = list(cls)
 
     def __unicode__(self):
         return ('%d:[' % len(self.cells)) + ', '.join([unicode(c) for c in self.cells]) + ']'
@@ -117,11 +118,12 @@ class Row:
                       for cell in self.cells]
         titles, texts = zip(*cell_pairs)
         texts = filter(None, texts)
-        return [HtmlRow(titles), HtmlRow(texts)]
+        return [HtmlRow(titles, cls=self.cls), HtmlRow(texts, cls=self.cls)]
 
 class TitleRow:
-    def __init__(self, cells=[]):
+    def __init__(self, cells=[], cls=[]):
         self.cells = list(cells)
+        self.cls = list(cls)
 
     def toHtmlRow(self):
         cells = [cell.toHtmlCell() for cell in self.cells]
