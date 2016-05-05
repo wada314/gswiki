@@ -5,6 +5,8 @@ from utils.json_loader import load_json_from_page
 
 Dependencies = ['pages']
 
+generates_headings = True
+
 def macro_CharacterData(macro, character_name=None):
     request = macro.request
     formatter = macro.formatter
@@ -17,10 +19,7 @@ def macro_CharacterData(macro, character_name=None):
 def create_character_data(request, formatter, character_name):
     j = load_json_from_page(request, character_name, u'character')
 
-    title = (formatter.heading(True, 2)
-             + formatter.text(u'キャラクター性能')
-             + formatter.heading(False, 2))
-    return title + create_desc(j, formatter)
+    return create_desc(j, formatter)
 
 def create_desc(j, formatter):
     grapple_title = (formatter.heading(True, 3)

@@ -8,6 +8,8 @@ from MoinMoin.macro import Include
 
 Dependencies = ['pages']
 
+generates_headings = True
+
 def macro_CharacterWPs(macro, character_name=None):
     request = macro.request
     formatter = macro.formatter
@@ -25,6 +27,6 @@ def create_wp_list(macro, request, formatter, character_name):
     j = j.get(u'ウェポンパック', [])
     text = u''
     for wp_name in j:
-        include_args = u'%s, "%s", %d' % (wp_name, wp_name, 2)
+        include_args = u'%s, , , to="==== コメント ===="' % (wp_name, )
         text += Include.execute(macro, include_args)
     return text
