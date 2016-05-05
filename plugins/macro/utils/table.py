@@ -127,6 +127,9 @@ class TitleRow:
         cells = [cell.toHtmlCell() for cell in self.cells]
         return HtmlRow(cells)
 
+    def toHtmlRows(self):
+        return [self.toHtmlRow()]
+
 class HtmlRow:
     def __init__(self, cells, cls=[], attrs={}):
         self.cells = list(cells)
@@ -179,6 +182,7 @@ class Cell:
 class TitleCell:
     def __init__(self, text=None, cls=[], attrs={}, formatted=False):
         self.text = text
+        self.title = None  # dummy
         self.cls = list(cls)
         self.attrs = dict(attrs)
         self.formatted = formatted

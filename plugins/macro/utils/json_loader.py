@@ -15,6 +15,8 @@ def load_json_text_from_page(request, page_name, parser_name):
         request.cfg, 'formatter', 'extracting_formatter')
     extracting_formatter = formatterClass(parser_name, request)
     page = Page(request, page_name, formatter=extracting_formatter)
+    if not page.isStandardPage(includeDeleted=False):
+        return None
     extracting_formatter.setPage(page)
     
     # Discarding the return value
@@ -74,7 +76,12 @@ def load_json_from_page(request, page_name, parser_name):
         use_pickle=True)
     if cache.needsUpdate(Page(request, page_name)._text_filename()):
         json_text = load_json_text_from_page(request, page_name, parser_name)
-        j = json.loads(json_text)
+        j = u''
+        if json_text:
+            try:
+                j = json.loads(json_text)
+            except Error:
+                pass
         cache.update(j)
     else:
         j = cache.content()
