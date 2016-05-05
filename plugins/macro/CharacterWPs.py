@@ -27,6 +27,6 @@ def create_wp_list(macro, request, formatter, character_name):
     j = j.get(u'ウェポンパック', [])
     text = u''
     for wp_name in j:
-        include_args = u'%s, , , to="==== コメント ===="' % (wp_name, )
+        include_args = u'%(wp_name)s, "%(wp_name)s", 3, from="=== %(wp_name)s ===", to="==== コメント ===="' % { u'wp_name': wp_name }
         text += Include.execute(macro, include_args)
     return text

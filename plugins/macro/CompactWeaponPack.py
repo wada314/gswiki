@@ -18,14 +18,10 @@ def macro_CompactWeaponPack(macro, _trailing_args=[]):
 
     cache = caching.CacheEntry(request, 'gswiki-wpowners', 'wpowners', 'wiki', use_pickle=True)
     if cache.needsUpdate(os.path.join(request.cfg.data_dir, 'edit-log')):
-        print u'updating cache'
         wp_to_character = load_wp_to_character_table(request)
         cache.update(wp_to_character)
     else:
-        print u'using cache'
         wp_to_character = cache.content()
-    import json
-    print json.dumps(wp_to_character, ensure_ascii=False)
 
     output = formatter.table(True)
     for wp_name in requested_wps:
@@ -70,5 +66,71 @@ def wp_to_rows(request, formatter, character_name, wp_name):
     output += formatter.table_cell(False)
     output += formatter.table_row(False)
 
+    # Second row: |  | double style | side style | tandem style |
+    output += formatter.table_row(True, attrs={u'rowclass': u'sheader'})
+    output += formatter.table_cell(True) + formatter.table_cell(False)
+    output += formatter.table_cell(True) + formatter.text(u'ダブルスタイル') +  formatter.table_cell(False)
+    output += formatter.table_cell(True) + formatter.text(u'サイドスタイル') +  formatter.table_cell(False)
+    output += formatter.table_cell(True) + formatter.text(u'タンデムスタイル') +  formatter.table_cell(False)
+    output += formatter.table_row(False)
+
+    # Third & forth row: weapons
+    right_weapon = wp.get(u'右手武器', {})
+    left_weapon = wp.get(u'左手武器', {})
+    side_weapon = wp.get(u'サイド武器', {})
+    tandem_weapon = wp.get(u'タンデム武器', {})
+
+    def find_sub_weapon(weapon):
+        weapon_json = load_json_from_page(request, weapon.get(u'名称', u''), u'weapon') or {}
+        leveled_weapon = weapon_json.get(u'レベル', {}).get(u'%d' % weapon.get(u'レベル', 0), {})
+        subweapon = leveled_weapon.get(u'_サブウェポン', {})
+        if subweapon:
+            return subweapon
+        subtrigger = leveled_weapon.get(u'_サブトリガー', u'')
+        if subtrigger:
+            return subtrigger
+        return None
+
+    side_sub_weapon = find_sub_weapon(side_weapon)
+    tandem_sub_weapon = find_sub_weapon(tandem_weapon)
+
+    def get_weapon_name(weapon):
+        if isinstance(weapon, unicode):
+            return u'(%s)' % weapon
+        else:
+            return u'%s Lv%d' % (weapon.get(u'名称', u'???'), weapon.get(u'レベル', 0))
+
+    def get_weapon_link(weapon):
+        weapon_name = get_weapon_name(weapon)
+        if isinstance(weapon, unicode):
+            return formatter.text(weapon_name)
+        else:
+            return (formatter.pagelink(True, weapon.get(u'名称', u'???'))
+                    + formatter.text(weapon_name)
+                    + formatter.pagelink(False))
+
+    # first row of weapons rows
+    output += formatter.table_row(True)
+    output += formatter.table_cell(True) + formatter.text(u'右') + formatter.table_cell(False)
+    output += formatter.table_cell(True) + get_weapon_link(right_weapon) + formatter.table_cell(False)
+
+    output += formatter.table_cell(True, rowspan=(1 if side_sub_weapon else 2))
+    output += get_weapon_link(side_weapon)
+    output += formatter.table_cell(False)
+    output += formatter.table_cell(True, rowspan=(1 if tandem_sub_weapon else 2))
+    output += get_weapon_link(tandem_weapon)
+    output += formatter.table_cell(False)
+    output += formatter.table_row(False)
+
+    # second row of weapons rows
+    output += formatter.table_row(True)
+    output += formatter.table_cell(True) + formatter.text(u'左') + formatter.table_cell(False)
+    output += formatter.table_cell(True) + get_weapon_link(left_weapon) + formatter.table_cell(False)
+
+    if side_sub_weapon: 
+        output += formatter.table_cell(True) + get_weapon_link(side_sub_weapon) + formatter.table_cell(False)
+    if tandem_sub_weapon: 
+        output += formatter.table_cell(True) + get_weapon_link(tandem_sub_weapon) + formatter.table_cell(False)
+    output += formatter.table_row(False)
 
     return output
