@@ -72,7 +72,8 @@ def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, pl
                               show_name=True)
         return row, subrow
     elif u'_サブトリガー' in leveled_weapon:
-        subrow.cells.append(Cell(u'武装名', u'(サブトリガー)', cls=[u'center']))
+        subtrigger = leveled_weapon[u'_サブトリガー']
+        subrow.cells.append(Cell(u'武装名', u'(%s)' % subtrigger, cls=[u'center']))
         # fill empty columns so that this row does not be shorter than the other rows
         subrow.cells.extend([Cell()] * (len(row.cells) - 2))
         return row, subrow
@@ -84,7 +85,7 @@ def get_tune_table(j, formatter):
     text = u''
     text += formatter.table(True)
     # header row
-    text += formatter.table_row(True, {u'class':u'header'})
+    text += formatter.table_row(True, {u'rowclass':u'header'})
     for header in [u'チューンLv', u'名称', u'メリット', u'デメリット']:
         text += (formatter.table_cell(True) 
                  + formatter.text(header) 
@@ -113,9 +114,9 @@ def get_tune_table(j, formatter):
             else:
                 pass
 
-            for cell in [merit, demerit]:
+            for effect in [merit, demerit]:
                 text += formatter.table_cell(True)
-                text += formatter.text(cell)
+                text += formatter.text(effect)
                 text += formatter.table_cell(False)
 
             text += formatter.table_row(False)

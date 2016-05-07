@@ -92,7 +92,7 @@ def create_row(request, j, row, level, formatter, **kw):
         row.cells.append(Cell(
             u'武装名',
             formatter.pagelink(True, name) + formatter.text(name) + formatter.pagelink(False),
-            cls=[u'center,hc'],
+            cls=[u'center', u'hc'],
             formatted=True
         ))
 

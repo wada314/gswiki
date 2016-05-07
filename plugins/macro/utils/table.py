@@ -39,7 +39,8 @@ class Table:
 
     def toHtmlTable(self, **kw):
         rows = copy.deepcopy(self.rows)
-        self._remove_empty_columns(rows)
+        if kw.get('remove_empty_columns', True):
+            self.remove_empty_columns(rows)
         html_rows = []
         if kw.get('generate_header', True):
             title_row = self._extract_title_row(rows)
@@ -53,7 +54,7 @@ class Table:
         return HtmlTable(html_rows)
 
     @staticmethod
-    def _remove_empty_columns(rows):
+    def remove_empty_columns(rows):
         """
         param rows might be modified to remove the empty columns.
         """
@@ -76,13 +77,15 @@ class Table:
         param rows might be modified to remove the title of each cells.
         """
         title_row = TitleRow()
+        if not rows:
+            return title_row
         col_num = min([len(row.cells) for row in rows])
         column_title_lists = [[] for _ in range(col_num)]
         for row in rows:
             for i, cell in enumerate(row.cells):
                 if cell and cell.title:
                     column_title_lists[i].append(cell.title)
-        column_titles = [min(titles, key=_json_name_priority) for titles in column_title_lists]
+        column_titles = [min(titles + [u''], key=_json_name_priority) for titles in column_title_lists]
         for row in rows:
             for column_title, cell in zip(column_titles, row.cells):
                 if not cell:
@@ -165,7 +168,7 @@ class Cell:
         returns (HtmlCell, HtmlCell).
         """
         if self.title:
-            title_cell = HtmlCell(self.title, self.cls + [u'subheader'],
+            title_cell = HtmlCell(self.title, self.cls + [u'sheader'],
                                    self.attrs, False)
             text_cell = HtmlCell(self.text, self.cls, self.attrs, self.formatted)
             return (title_cell, text_cell)
