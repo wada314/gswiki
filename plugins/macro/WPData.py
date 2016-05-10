@@ -22,7 +22,7 @@ def macro_WPData(macro, _trailing_args=[]):
     return create_wp_data(request, formatter, requested_wps)
 
 def create_wp_data(request, formatter, requested_wps):
-    j = load_json_from_page(request, requested_wps[0], u'wp')
+    j = load_json_from_page(request, requested_wps[0], u'wp') or {}
     if not j:
         return u'no wp data'
     table = Table()
@@ -52,7 +52,7 @@ def create_wp_data(request, formatter, requested_wps):
     return text
 
 def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, place_name):
-    weapon_json = load_json_from_page(request, name, u'weapon')
+    weapon_json = load_json_from_page(request, name, u'weapon') or {}
     row = Row()
     row.cells.append(Cell(u'装備箇所', place_name, cls=['center','hc']))
     WeaponData.create_row(request, weapon_json, row, level, formatter,
@@ -66,7 +66,7 @@ def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, pl
         subweapon = leveled_weapon[u'_サブウェポン']
         subname = subweapon[u'名称']
         sublevel = subweapon[u'レベル']
-        subweapon_json = load_json_from_page(request, subname, u'weapon')
+        subweapon_json = load_json_from_page(request, subname, u'weapon') or {}
         WeaponData.create_row(request, subweapon_json, subrow, sublevel, formatter,
                               subweapon_in_row=False, subtrigger_in_row=False,
                               show_name=True)
@@ -81,7 +81,9 @@ def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, pl
         return row, None
 
 def get_tune_table(j, formatter):
-    tunes = j[u'チューン']
+    tunes = j.get(u'チューン', {})
+    if not tunes:
+        return u''
     text = u''
     text += formatter.table(True)
     # header row
