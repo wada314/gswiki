@@ -26,7 +26,7 @@ def load_json_text_from_page(request, page_name, parser_name):
     return extracting_formatter.get_extracted()
 
 def _load_all_jsons(request):
-    character_names = load_json_from_page(request, u'CharacterList', u'characters')
+    character_names = load_json_from_page(request, u'CharacterList', u'characters') or {}
     wp_names = set()
     weapon_names = set()
     weapon_name_queue = []
@@ -41,13 +41,13 @@ def _load_all_jsons(request):
     for c_name in character_names:
         # make sure to be an unicode object
         c_name = unicode(c_name) if c_name else u'BadCharacterName'
-        c = load_json_from_page(request, c_name, u'character')
+        c = load_json_from_page(request, c_name, u'character') or {}
         characters.append(c)
-        wp_names.update(c.get(u'ウェポンパック', []))
+        wp_names.update(c.get(u'ウェポンパック', []) or [])
 
     for wp_name in wp_names:
         wp_name = unicode(wp_name) if wp_name else u'BadWPName'
-        wp = load_json_from_page(request, wp_name, u'wp')
+        wp = load_json_from_page(request, wp_name, u'wp') or {}
         wps.append(wp)
         for equip_name in [u'右手武器', u'左手武器',
                            u'サイド武器', u'タンデム武器']:
@@ -58,7 +58,7 @@ def _load_all_jsons(request):
     while weapon_name_queue:
         w_name = weapon_name_queue.pop()
         w_name = unicode(w_name) if w_name else u'BadWeaponName'
-        weapon = load_json_from_page(request, w_name, u'weapon')
+        weapon = load_json_from_page(request, w_name, u'weapon') or {}
 
         for leveled_weapon in weapon.get(u'レベル', {}).itervalues():
             if u'_サブウェポン' in leveled_weapon:
