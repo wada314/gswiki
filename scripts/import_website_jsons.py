@@ -155,7 +155,7 @@ def processWeaponPack(j, context, dry_run):
 
     def getBriefWeaponJson(weapon):
         return {
-            u'名称': weapon.get(u'weaponName'),
+            u'名称': weapon.get(u'weaponName').strip(),
             u'レベル': weapon.get(u'weaponLevel'),
         }
 

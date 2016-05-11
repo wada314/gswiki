@@ -6,7 +6,7 @@ Copyright (c) 2014 by wada314
 /* content styles */
 
 html {
-    background-color: white;
+    background-color: #EEE
     color: black;
     font-family: Arial, Lucida Grande, sans-serif;
     font-size: 0.9em;
@@ -48,12 +48,12 @@ body {
 h1 {
     font-size: 2em;
     font-family:verdana, arial, helvetica, Sans-Serif;
-    color:inherit;
-    background-color:#DDEEFF;
+    color:white;
     padding:.3em;
     border:0px;
     margin: 0px 0px .5em 0px;
-    text-shadow: 0 0 4px white;
+    text-shadow: 0 0 4px black;
+    background-color: #0068B2
 }
 
 h2 {
@@ -73,11 +73,11 @@ h2, h2 a:link, h2 a:visited {
 h3 {
     font-weight: normal;
     padding: 0.3em 0 0.2em 1em;
-    text-shadow: 0 1px 0 white;
+    text-shadow: 0 1px 0 black;
     border-bottom: 1px solid #666;
+    background-image: linear-gradient(to right,#002d5c,#0095ff);
 }
 h3, h3 a:link, h3 a:visited {
-    background-image: linear-gradient(to right,#002d5c,#0095ff);
     color: white;
 }
 

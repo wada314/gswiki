@@ -24,21 +24,6 @@ textarea {
     padding:1em 0 0 1em;
     margin:0px;
 
-    /* from: http://www.css3factory.com/linear-gradients/ */
-    background-image: -webkit-gradient(
-        linear,
-        left top,
-        left bottom,
-        color-stop(0, #000DC4),
-        color-stop(0.34, #4AE8F0),
-        color-stop(0.66, #C7FFFF),
-        color-stop(1, #FFFFFF)
-    );
-    background-image: -o-linear-gradient(bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
-    background-image: -moz-linear-gradient(bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
-    background-image: -webkit-linear-gradient(bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
-    background-image: -ms-linear-gradient(bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
-    background-image: linear-gradient(to bottom, #000DC4 0%, #4AE8F0 34%, #C7FFFF 66%, #FFFFFF 100%);
     text-align: center;
     min-height: 4em;
 }
@@ -76,8 +61,7 @@ textarea {
     display: block;
     font-size: 2em;
     font-weight:bold;
-    color: white;
-    text-shadow: 0.1em 0.1em 0.3em #0878C0;
+    color: #666;
     background-color:transparent;
     padding: 0.1em 0 0 0;
     border: 0px;
@@ -103,9 +87,8 @@ textarea {
     height: 100%;
     font-size: 1.5em;
     font-weight: bold;
-    color: white;
+    color: #666;
     font-family: sans-serif;
-    text-shadow: 0.1em 0.1em 0.3em #0878C0;
 }
 
 #username {
