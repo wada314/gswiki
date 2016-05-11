@@ -23,7 +23,7 @@ def macro_WeaponData(macro, _trailing_args=[]):
                               show_wp_owners=True)
 
 def get_weapon_owner_wps(request, weapon, level):
-    j = load_all_jsons(request)
+    j = load_all_jsons(request) or {}
     # The weapon may be owned as a subtrigger of other weapons.
     # List up all weapons has the weapon as subtrigger (or as main trigger)
     weapons = set()
@@ -50,7 +50,7 @@ def get_weapon_owner_wps(request, weapon, level):
     return wps
 
 def create_weapon_data(request, formatter, requested_weapons, **kw):
-    j = load_json_from_page(request, requested_weapons[0], u'weapon')
+    j = load_json_from_page(request, requested_weapons[0], u'weapon') or {}
     if not j:
         return u'No weapon data'
     table = Table()
