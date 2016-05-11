@@ -74,7 +74,7 @@ def load_json_from_page(request, page_name, parser_name):
     cache = caching.CacheEntry(
         request, 'gswiki-pagejson', _json_key(page_name, parser_name), 'wiki',
         use_pickle=True)
-    if cache.needsUpdate(Page(request, page_name)._text_filename()):
+    if cache.needsUpdate(Page(request, page_name)._text_filename().encode('utf-8')):
         json_text = load_json_text_from_page(request, page_name, parser_name)
         j = u''
         if json_text:

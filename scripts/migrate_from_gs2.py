@@ -14,6 +14,7 @@ in your wiki config like this:
 """
 
 import sys
+# TODO: Do something for these path...
 sys.path.append('/home/shohei/gs3/gs2')
 sys.path.append('/home/shohei/gs3/moin-1.9.8')
 import re
