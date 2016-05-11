@@ -8,7 +8,7 @@ from MoinMoin import caching, wikiutil
 
 def _json_key(page_name, parser_name):
     # This is a bit vulnerable, but I believe it's not a big problem...
-    return u'%s#%s' % (page_name, parser_name)
+    return (u'%s#%s' % (page_name, parser_name)).encode('utf-8')
 
 def load_json_text_from_page(request, page_name, parser_name):
     formatterClass = wikiutil.searchAndImportPlugin(
