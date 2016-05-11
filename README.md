@@ -13,7 +13,9 @@ MoinMoin wiki plugin for GS3
 4. Add a link to theme directories:
 
     cd <*MoinMoin root*>/web/static/htdocs
+    
     ln -s gs2mobile <*where you extracted the project in Step 2.*>/gs2mobile
+    
     ln -s gs3mobile <*where you extracted the project in Step 2.*>/gs3mobile
 
 5. Run wikiserver.py at the MoinMoin's root directory.
