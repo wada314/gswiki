@@ -204,6 +204,8 @@ def create_row(request, j, row, level, formatter, **kw):
         row.cells.append(Cell(u'回復範囲', u'%dm' % weapon[u'回復範囲'], cls=[u'right']))
     elif u'弾薬回復範囲' in weapon:
         row.cells.append(Cell(u'補給範囲', u'%dm' % weapon[u'弾薬回復範囲'], cls=[u'right']))
+    elif u'爆発範囲' in weapon:
+        row.cells.append(Cell(u'爆発範囲', u'%dm' % weapon[u'爆発範囲'], cls=[u'right']))
     else:
         row.cells.append(None)
 
