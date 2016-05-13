@@ -2,6 +2,7 @@
 
 import json
 import os
+import logging
 
 from MoinMoin.Page import Page
 from MoinMoin import caching, wikiutil
