@@ -80,7 +80,8 @@ def load_json_from_page(request, page_name, parser_name):
         if json_text:
             try:
                 j = json.loads(json_text)
-            except Error:
+            except Exception as e:
+                logging.warning(u'Something is wrong: %s', e)
                 pass
         cache.update(j)
     else:
