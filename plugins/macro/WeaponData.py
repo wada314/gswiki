@@ -3,6 +3,8 @@
 from utils.table import Table, Row, Cell
 from utils.json_loader import load_json_from_page, load_all_jsons
 
+import math
+
 Dependencies = ['pages']
 
 def macro_WeaponData(macro, _trailing_args=[]):
@@ -126,9 +128,18 @@ def create_row(request, j, row, level, formatter, **kw):
     else:
         row.cells.append(None)
 
+
+    if ((u'コンボ蓄積値' in weapon and u'灰ダウン蓄積値' in weapon)
+        and (u'攻撃力' in weapon or u'散弾攻撃力' in weapon or u'攻撃力(爆風)' in weapon)):
+        base = weapon.get(u'攻撃力', 0) or weapon.get(u'散弾攻撃力', 0) or weapon.get(u'攻撃力(爆風)', 0)
+        total = get_total_damage_str(
+            base, float(weapon.get(u'コンボ蓄積値', u'0.0')),
+            int(weapon.get(u'灰ダウン蓄積値', 0)))
+        row.cells.append(Cell(u'総ダメージ', total, cls=[u'right']))
+
     # Very special case: both 防御力 and 回復力 are existing. (回復エリアシールド).
     # Add another column in this case.
-    if u'防御力' in weapon and u'回復力' in weapon:
+    elif u'防御力' in weapon and u'回復力' in weapon:
         row.cells.append(Cell(u'防御力', u'%d' % weapon[u'防御力'], cls=[u'right']))
     else:
         row.cells.append(None)
@@ -241,3 +252,16 @@ def create_row(request, j, row, level, formatter, **kw):
             lines.append(line)
         owners_text = formatter.linebreak(preformatted=False).join(lines)
         row.cells.append(Cell(u'所有WP', owners_text, cls=[u'center'], formatted=True))
+
+COMBO_ACCUMULATION_TABLE = [
+    max(1.0/7, pow(x/50.0 - 1, 2)) for x in range(34)
+]
+def get_total_damage_str(base, combo_accum, down_accum):
+    # for now, since we don't know robots' down resistance,
+    # we only calculate for human's total damage.
+    hit = int(math.ceil(100.0 / down_accum))
+    total = 0
+    for i in range(hit):
+        accum_i = int(math.floor(min(math.floor(combo_accum * i), len(COMBO_ACCUMULATION_TABLE))))
+        total += base * COMBO_ACCUMULATION_TABLE[accum_i]
+    return u'%d' % math.floor(total)
