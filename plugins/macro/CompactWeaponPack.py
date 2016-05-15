@@ -34,10 +34,10 @@ def macro_CompactWeaponPack(macro, _trailing_args=[]):
     return output
 
 def load_wp_to_character_table(request):
-    character_list = load_json_from_page(request, u'CharacterList', u'characters') or []
+    character_list = load_json_from_page(request, None, u'CharacterList', u'characters') or []
     wp_to_character = {}
     for character_name in character_list:
-        character = load_json_from_page(request, character_name, u'character') or {}
+        character = load_json_from_page(request, None, character_name, u'character') or {}
         wp_list = character.get(u'ウェポンパック', [])
         for wp in wp_list:
             wp_to_character[wp] = character_name

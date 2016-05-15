@@ -11,18 +11,21 @@ Dependencies = ['pages']
 def macro_IncludeWeapons(macro, _trailing_args=[]):
     request = macro.request
     formatter = macro.formatter
+    parser = macro.parser
 
     requested_weapons = _trailing_args
     if not requested_weapons:
         # assume the caller requested to show a weapon data of the current page.
         requested_weapons = [macro.formatter.page.page_name]
+    else:
+        parser = None
     requested_weapons.reverse()
     
     tables = []
     all_rows = []
     existing_weapons = []
     for weapon_name in requested_weapons:
-        w = load_json_from_page(request, weapon_name, u'weapon') or {}
+        w = load_json_from_page(request, parser, weapon_name, u'weapon') or {}
         table = Table()
         if w:
             WeaponData.create_table(request, w, table, formatter, show_wp_owners=True)

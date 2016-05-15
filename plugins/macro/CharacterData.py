@@ -10,14 +10,17 @@ generates_headings = True
 def macro_CharacterData(macro, character_name=None):
     request = macro.request
     formatter = macro.formatter
+    parser = macro.parser
 
     if not character_name:
         character_name = macro.formatter.page.page_name
+    else:
+        parser = None
 
-    return create_character_data(request, formatter, character_name)
+    return create_character_data(request, parser, formatter, character_name)
 
-def create_character_data(request, formatter, character_name):
-    j = load_json_from_page(request, character_name, u'character')
+def create_character_data(request, parser, formatter, character_name):
+    j = load_json_from_page(request, parser, character_name, u'character')
 
     return create_desc(j, formatter)
 

@@ -7,15 +7,24 @@ import logging
 from MoinMoin.Page import Page
 from MoinMoin import caching, wikiutil
 
-def _json_key(page_name, parser_name):
+def _json_key(page_name, parser_name, rev, has_parser):
     # This is a bit vulnerable, but I believe it's not a big problem...
-    return (u'%s#%s' % (page_name, parser_name)).encode('utf-8')
+    return (u'%s#%s#%d#%d' % (page_name, parser_name, rev, has_parser)).encode('utf-8')
 
-def load_json_text_from_page(request, page_name, parser_name):
+def load_json_text_from_page(request, parser, page_name, parser_name):
     formatterClass = wikiutil.searchAndImportPlugin(
         request.cfg, 'formatter', 'extracting_formatter')
     extracting_formatter = formatterClass(parser_name, request)
-    page = Page(request, page_name, formatter=extracting_formatter)
+    # Request rev (number) is only available for the requested page.
+    rev = request.rev or 0 if request.page.page_name == page_name else 0
+    page = Page(request, page_name, formatter=extracting_formatter, rev=rev)
+
+    # this is so we get a correctly updated data if we just preview in the editor -
+    # the new content is not stored on disk yet, but available as macro.parser.raw:
+    if parser:
+        format = '#format %s\n' % page.pi['format']
+        page.set_raw_body(format + parser.raw, modified=1)
+
     if not page.isStandardPage(includeDeleted=False):
         return None
     extracting_formatter.setPage(page)
@@ -27,7 +36,8 @@ def load_json_text_from_page(request, page_name, parser_name):
     return extracting_formatter.get_extracted()
 
 def _load_all_jsons(request):
-    character_names = load_json_from_page(request, u'CharacterList', u'characters') or {}
+    character_names = load_json_from_page(
+        request, None, u'CharacterList', u'characters') or {}
     wp_names = set()
     weapon_names = set()
     weapon_name_queue = []
@@ -42,13 +52,13 @@ def _load_all_jsons(request):
     for c_name in character_names:
         # make sure to be an unicode object
         c_name = unicode(c_name) if c_name else u'BadCharacterName'
-        c = load_json_from_page(request, c_name, u'character') or {}
+        c = load_json_from_page(request, None, c_name, u'character') or {}
         characters.append(c)
         wp_names.update(c.get(u'ウェポンパック', []) or [])
 
     for wp_name in wp_names:
         wp_name = unicode(wp_name) if wp_name else u'BadWPName'
-        wp = load_json_from_page(request, wp_name, u'wp') or {}
+        wp = load_json_from_page(request, None, wp_name, u'wp') or {}
         wps.append(wp)
         for equip_name in [u'右手武器', u'左手武器',
                            u'サイド武器', u'タンデム武器']:
@@ -59,7 +69,7 @@ def _load_all_jsons(request):
     while weapon_name_queue:
         w_name = weapon_name_queue.pop()
         w_name = unicode(w_name) if w_name else u'BadWeaponName'
-        weapon = load_json_from_page(request, w_name, u'weapon') or {}
+        weapon = load_json_from_page(request, None, w_name, u'weapon') or {}
 
         for leveled_weapon in weapon.get(u'レベル', {}).itervalues():
             if u'_サブウェポン' in leveled_weapon:
@@ -71,12 +81,21 @@ def _load_all_jsons(request):
 
     return {u'characters': characters, u'wps': wps, u'weapons': weapons}
 
-def load_json_from_page(request, page_name, parser_name):
+def load_json_from_page(request, parser, page_name, parser_name):
+    """
+    IMPORTANT: give parser only if you are sure that the parser is for the requested page_name.
+    Otherwise, give None.
+    """
+
+    # Request rev (number) is only available for the requested page.
+    rev = request.rev or 0 if request.page.page_name == page_name else 0
+    print True if parser else False
+    print page_name.encode('utf-8')
     cache = caching.CacheEntry(
-        request, 'gswiki-pagejson', _json_key(page_name, parser_name), 'wiki',
-        use_pickle=True)
+        request, 'gswiki-pagejson', _json_key(page_name, parser_name, rev, True if parser else False),
+        'wiki', use_pickle=True)
     if cache.needsUpdate(Page(request, page_name)._text_filename().encode('utf-8')):
-        json_text = load_json_text_from_page(request, page_name, parser_name)
+        json_text = load_json_text_from_page(request, parser, page_name, parser_name)
         j = u''
         if json_text:
             try:

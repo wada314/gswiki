@@ -21,4 +21,4 @@ def macro_CharacterList(macro, _trailing_args=[]):
     return text
 
 def get_character_list(request):
-    return load_json_from_page(request, u'CharacterList', u'characters')
+    return load_json_from_page(request, None, u'CharacterList', u'characters')

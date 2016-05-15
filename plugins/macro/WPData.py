@@ -9,20 +9,23 @@ Dependencies = ['pages']
 def macro_WPData(macro, _trailing_args=[]):
     request = macro.request
     formatter = macro.formatter
+    parser = macro.parser
 
     requested_wps = _trailing_args
     if not requested_wps:
         # assume the caller requested to show a weapon data of the current page.
         requested_wps = [macro.formatter.page.page_name]
+    else:
+        parser = None
 
     if len(requested_wps) == 1:
         pass
     else:
         raise NotImplementedError()
-    return create_wp_data(request, formatter, requested_wps)
+    return create_wp_data(request, parser, formatter, requested_wps)
 
-def create_wp_data(request, formatter, requested_wps):
-    j = load_json_from_page(request, requested_wps[0], u'wp') or {}
+def create_wp_data(request, parser, formatter, requested_wps):
+    j = load_json_from_page(request, parser, requested_wps[0], u'wp') or {}
     if not j:
         return u'no wp data'
     table = Table()
@@ -52,7 +55,7 @@ def create_wp_data(request, formatter, requested_wps):
     return text
 
 def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, place_name):
-    weapon_json = load_json_from_page(request, name, u'weapon') or {}
+    weapon_json = load_json_from_page(request, None, name, u'weapon') or {}
     row = Row()
     row.cells.append(Cell(u'装備箇所', place_name, cls=['center','hc']))
     WeaponData.create_row(request, weapon_json, row, level, formatter,

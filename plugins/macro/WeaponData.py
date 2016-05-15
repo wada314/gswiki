@@ -8,18 +8,21 @@ Dependencies = ['pages']
 def macro_WeaponData(macro, _trailing_args=[]):
     request = macro.request
     formatter = macro.formatter
+    parser = macro.parser
 
     requested_weapons = _trailing_args
     if not requested_weapons:
         # assume the caller requested to show a weapon data of the current page.
         requested_weapons = [macro.formatter.page.page_name]
+    else:
+        parser = None
 
     if len(requested_weapons) == 1:
         pass
     else:
         raise NotImplementedError()
 
-    return create_weapon_data(request, formatter, requested_weapons,
+    return create_weapon_data(request, parser, formatter, requested_weapons,
                               show_wp_owners=True)
 
 def get_weapon_owner_wps(request, weapon, level):
@@ -49,8 +52,8 @@ def get_weapon_owner_wps(request, weapon, level):
 
     return wps
 
-def create_weapon_data(request, formatter, requested_weapons, **kw):
-    j = load_json_from_page(request, requested_weapons[0], u'weapon') or {}
+def create_weapon_data(request, parser, formatter, requested_weapons, **kw):
+    j = load_json_from_page(request, parser, requested_weapons[0], u'weapon') or {}
     if not j:
         return u'No weapon data'
     table = Table()
