@@ -28,6 +28,8 @@ def create_wp_data(request, parser, formatter, requested_wps):
     j = load_json_from_page(request, parser, requested_wps[0], u'wp') or {}
     if not j:
         return u'no wp data'
+    wp_name = j.get(u'名称', u'')
+
     table = Table()
 
     text = formatter.linebreak(preformatted=False)
@@ -45,7 +47,7 @@ def create_wp_data(request, parser, formatter, requested_wps):
         name = weapon_name.get(u'名称', u'unknown')
         level = weapon_name.get(u'レベル', 0)
         row, subrow = get_leveled_weapon_and_subweapon_rows(
-            request, j, formatter, name, level, place_name)
+            request, j, formatter, name, level, place_name, wp_name)
         table.rows.append(row)
         if subrow:
             table.rows.append(subrow)
@@ -54,7 +56,7 @@ def create_wp_data(request, parser, formatter, requested_wps):
     text += get_tune_table(j, formatter)
     return text
 
-def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, place_name):
+def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, place_name, wp_name):
     weapon_json = load_json_from_page(request, None, name, u'weapon') or {}
     row = Row()
     row.cells.append(Cell(u'装備箇所', place_name, cls=['center','hc']))
@@ -65,20 +67,27 @@ def get_leveled_weapon_and_subweapon_rows(request, j, formatter, name, level, pl
     subrow.cells.append(Cell(u'装備箇所', u'サブ', cls=[u'center','hc']))
 
     leveled_weapon = weapon_json.get(u'レベル', {}).get(u'%d' % level, {})
-    if u'_サブウェポン' in leveled_weapon:
-        subweapon = leveled_weapon[u'_サブウェポン']
+    if u'サブウェポン' in leveled_weapon:
+        subweapon = leveled_weapon[u'サブウェポン']
         subname = subweapon[u'名称']
         sublevel = subweapon[u'レベル']
-        subweapon_json = load_json_from_page(request, subname, u'weapon') or {}
+        subweapon_json = load_json_from_page(request, None, subname, u'weapon') or {}
         WeaponData.create_row(request, subweapon_json, subrow, sublevel, formatter,
                               subweapon_in_row=False, subtrigger_in_row=False,
                               show_name=True)
         return row, subrow
-    elif u'_サブトリガー' in leveled_weapon:
-        subtrigger = leveled_weapon[u'_サブトリガー']
+    elif u'サブトリガー' in leveled_weapon:
+        subtrigger = leveled_weapon[u'サブトリガー']
         subrow.cells.append(Cell(u'武装名', u'(%s)' % subtrigger, cls=[u'center']))
         # fill empty columns so that this row does not be shorter than the other rows
         subrow.cells.extend([Cell()] * (len(row.cells) - 2))
+        return row, subrow
+    elif is_xi_wp(request, wp_name) and place_name in [u'サイド', u'タンデム']:
+        subname = u'クシーバルカン' if place_name == u'サイド' else u'クシーグレネード'
+        subweapon_json = load_json_from_page(request, None, subname, u'weapon') or {}
+        WeaponData.create_row(request, subweapon_json, subrow, 1, formatter,
+                              subweapon_in_row=False, subtrigger_in_row=False,
+                              show_name=True)
         return row, subrow
     else:
         return row, None
@@ -127,3 +136,7 @@ def get_tune_table(j, formatter):
             text += formatter.table_row(False)
     text += formatter.table(False)
     return text
+
+def is_xi_wp(request, wp_name):
+    xi_json = load_json_from_page(request, None, u'ξ（クシー）988', u'character') or {}
+    return wp_name in xi_json.get(u'ウェポンパック', [])

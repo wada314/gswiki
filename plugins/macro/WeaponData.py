@@ -81,6 +81,8 @@ def create_row(request, j, row, level, formatter, **kw):
     @keyword subweapon_in_row True to put subweapon name into 備考
     @keyword show_name True to add weapon name at the top of the row
     @keyword show_wp_owners True to show wp owners list
+    @keyword is_xi_side True to add Xi vulkan
+    @keyword is_xi_tandem True to add Xi grenade
     """
     weapon = j.get(u'レベル', {}).get(u'%d' % level)
     if not weapon:
@@ -224,9 +226,11 @@ def create_row(request, j, row, level, formatter, **kw):
         row.cells.append(None)
 
     notes = []
+    has_subtrigger = False
     if u'備考' in weapon:
         notes.append(formatter.text(weapon[u'備考']))
     if kw.get('subweapon_in_row', False) and u'サブウェポン' in weapon:
+        has_subtrigger = True
         subweapon = weapon[u'サブウェポン']
         note = (formatter.text(u'サブ: ')
                 + formatter.pagelink(True, subweapon[u'名称'])
@@ -234,7 +238,20 @@ def create_row(request, j, row, level, formatter, **kw):
                 + formatter.pagelink(False))
         notes.append(note)
     if kw.get('subtrigger_in_row', True) and u'サブトリガー' in weapon:
+        has_subtrigger = True
         notes.append(formatter.text(u'サブ: %s' % weapon[u'サブトリガー']))
+    if kw.get('subweapon_in_row', False) and kw.get('is_xi_side', False) and not has_subtrigger:
+        note = (formatter.text(u'サブ: ')
+                + formatter.pagelink(True, u'クシーバルカン')
+                + formatter.text(u'%s Lv.%d' % (u'クシーバルカン', 1))
+                + formatter.pagelink(False))
+        notes.append(note)
+    if kw.get('subweapon_in_row', False) and kw.get('is_xi_tandem', False) and not has_subtrigger:
+        note = (formatter.text(u'サブ: ')
+                + formatter.pagelink(True, u'クシーグレネード')
+                + formatter.text(u'%s Lv.%d' % (u'クシーグレネード', 1))
+                + formatter.pagelink(False))
+        notes.append(note)
     if notes:
         notes_text = formatter.linebreak(preformatted=False).join(notes)
         row.cells.append(Cell(u'備考', notes_text, cls=[u'center'], formatted=True))
