@@ -262,6 +262,7 @@ def get_total_damage_str(base, combo_accum, down_accum):
     hit = int(math.ceil(100.0 / down_accum))
     total = 0
     for i in range(hit):
-        accum_i = int(math.floor(min(math.floor(combo_accum * i), len(COMBO_ACCUMULATION_TABLE))))
+        accum_i = min(math.floor(combo_accum * i), len(COMBO_ACCUMULATION_TABLE)-1)
+        accum_i = int(math.floor(accum_i))
         total += base * COMBO_ACCUMULATION_TABLE[accum_i]
     return u'%d' % math.floor(total)
