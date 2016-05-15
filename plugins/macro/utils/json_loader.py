@@ -7,9 +7,9 @@ import logging
 from MoinMoin.Page import Page
 from MoinMoin import caching, wikiutil
 
-def _json_key(page_name, parser_name, rev, has_parser):
+def _json_key(page_name, parser_name, rev):
     # This is a bit vulnerable, but I believe it's not a big problem...
-    return (u'%s#%s#%d#%d' % (page_name, parser_name, rev, has_parser)).encode('utf-8')
+    return (u'%s#%s#%d' % (page_name, parser_name, rev)).encode('utf-8')
 
 def load_json_text_from_page(request, parser, page_name, parser_name):
     formatterClass = wikiutil.searchAndImportPlugin(
@@ -89,12 +89,14 @@ def load_json_from_page(request, parser, page_name, parser_name):
 
     # Request rev (number) is only available for the requested page.
     rev = request.rev or 0 if request.page.page_name == page_name else 0
-    print True if parser else False
-    print page_name.encode('utf-8')
+
+    has_parser = True if parser else False
+    use_cache = not has_parser
     cache = caching.CacheEntry(
-        request, 'gswiki-pagejson', _json_key(page_name, parser_name, rev, True if parser else False),
+        request, 'gswiki-pagejson', _json_key(page_name, parser_name, rev),
         'wiki', use_pickle=True)
-    if cache.needsUpdate(Page(request, page_name)._text_filename().encode('utf-8')):
+    if (not use_cache or
+        cache.needsUpdate(Page(request, page_name)._text_filename().encode('utf-8'))):
         json_text = load_json_text_from_page(request, parser, page_name, parser_name)
         j = u''
         if json_text:
@@ -103,7 +105,8 @@ def load_json_from_page(request, parser, page_name, parser_name):
             except Exception as e:
                 logging.warning(u'Something is wrong: %s', e)
                 pass
-        cache.update(j)
+        if use_cache:
+            cache.update(j)
     else:
         j = cache.content()
 
