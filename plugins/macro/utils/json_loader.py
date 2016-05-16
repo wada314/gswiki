@@ -76,7 +76,7 @@ def _load_all_jsons(request):
                 subweapon_name = leveled_weapon.get(u'サブウェポン', {}).get(u'名称', u'')
                 if subweapon_name and subweapon_name not in weapon_names:
                     weapon_names.add(subweapon_name)
-                    weapon_name_queue.push(subweapon_name)
+                    weapon_name_queue.append(subweapon_name)
         weapons.append(weapon)
 
     return {u'characters': characters, u'wps': wps, u'weapons': weapons}
