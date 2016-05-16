@@ -83,10 +83,10 @@ def wp_to_rows(request, formatter, character_name, wp_name):
     def find_sub_weapon(weapon):
         weapon_json = load_json_from_page(request, weapon.get(u'名称', u''), u'weapon') or {}
         leveled_weapon = weapon_json.get(u'レベル', {}).get(u'%d' % weapon.get(u'レベル', 0), {})
-        subweapon = leveled_weapon.get(u'_サブウェポン', {})
+        subweapon = leveled_weapon.get(u'サブウェポン', {})
         if subweapon:
             return subweapon
-        subtrigger = leveled_weapon.get(u'_サブトリガー', u'')
+        subtrigger = leveled_weapon.get(u'サブトリガー', u'')
         if subtrigger:
             return subtrigger
         return None

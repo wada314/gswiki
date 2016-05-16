@@ -72,7 +72,7 @@ def _load_all_jsons(request):
         weapon = load_json_from_page(request, None, w_name, u'weapon') or {}
 
         for leveled_weapon in weapon.get(u'レベル', {}).itervalues():
-            if u'_サブウェポン' in leveled_weapon:
+            if u'サブウェポン' in leveled_weapon:
                 subweapon_name = leveled_weapon.get(u'サブウェポン', {}).get(u'名称', u'')
                 if subweapon_name and subweapon_name not in weapon_names:
                     weapon_names.add(subweapon_name)

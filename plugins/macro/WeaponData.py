@@ -36,7 +36,7 @@ def get_weapon_owner_wps(request, weapon, level):
     for w in j.get(u'weapons', []):
         for l, leveled_weapon in w.get(u'レベル', {}).iteritems():
             l = int(l)
-            subw = leveled_weapon.get(u'_サブウェポン', None)
+            subw = leveled_weapon.get(u'サブウェポン', None)
             if not subw:
                 continue
             if subw.get(u'名称', u'') == weapon and subw.get(u'レベル', -1) == level:

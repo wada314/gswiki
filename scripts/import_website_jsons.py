@@ -33,15 +33,15 @@ WP_PAGE_DEFAULT_BODY_PRE = u'''
 
 ==== 解説 ====
 
-==== コメント ====
-<<AddComment>>
-<<Comments>>
-
 {{{#!wp
 '''
 
 WP_PAGE_DEFAULT_BODY_POST = u'''
 }}}
+
+==== コメント ====
+<<AddComment>>
+<<Comments>>
 '''
 
 WEAPON_PAGE_DEFAULT_BODY_PRE = u'''
@@ -50,15 +50,15 @@ WEAPON_PAGE_DEFAULT_BODY_PRE = u'''
 
 ==== 解説 ====
 
-==== コメント ====
-<<AddComment>>
-<<Comments>>
-
 {{{#!weapon
 '''
 
 WEAPON_PAGE_DEFAULT_BODY_POST = u'''
 }}}
+
+==== コメント ====
+<<AddComment>>
+<<Comments>>
 '''
 
 RE_WP_PAGE = re.compile(ur'^(?P<pre>.*{{{\s*#!wp)(?P<body>.*)(?P<post>}}}.*)$', re.DOTALL)
@@ -213,6 +213,11 @@ def processWeapon(j, context, is_sub, dry_run):
                 pass
 
     diff_dst_json = statusMapToAttrs(status_map)
+    if not is_sub and j.get(u'subStatusMap', {}):
+        diff_dst_json[u'サブウェポン'] = {
+            u'名称': j[u'subWeaponName'],
+            u'レベル': int(j[u'subWeaponLevel']),
+        }
 
     if not body_json:
         body_pre = WEAPON_PAGE_DEFAULT_BODY_PRE
