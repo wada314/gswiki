@@ -46,7 +46,7 @@ def load_wp_to_character_table(request):
 
 def wp_to_rows(request, formatter, character_name, wp_name):
     output = u''
-    wp = load_json_from_page(request, wp_name, u'wp') or {}
+    wp = load_json_from_page(request, None, wp_name, u'wp') or {}
     
     # First row: WP brief data
     output += formatter.table_row(True, attrs={u'rowclass': u'wpheader'})
@@ -81,7 +81,7 @@ def wp_to_rows(request, formatter, character_name, wp_name):
     tandem_weapon = wp.get(u'タンデム武器', {})
 
     def find_sub_weapon(weapon):
-        weapon_json = load_json_from_page(request, weapon.get(u'名称', u''), u'weapon') or {}
+        weapon_json = load_json_from_page(request, None, weapon.get(u'名称', u''), u'weapon') or {}
         leveled_weapon = weapon_json.get(u'レベル', {}).get(u'%d' % weapon.get(u'レベル', 0), {})
         subweapon = leveled_weapon.get(u'サブウェポン', {})
         if subweapon:
