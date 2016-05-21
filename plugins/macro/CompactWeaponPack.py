@@ -15,6 +15,7 @@ def macro_CompactWeaponPack(macro, _trailing_args=[]):
     requested_wps = _trailing_args
     if not _trailing_args:
         return u'Please specify at least one WP name.'
+    requested_wps.reverse()
 
     cache = caching.CacheEntry(request, 'gswiki-wpowners', 'wpowners', 'wiki', use_pickle=True)
     if cache.needsUpdate(os.path.join(request.cfg.data_dir, 'edit-log')):
