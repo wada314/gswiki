@@ -34,10 +34,11 @@ def create_wp_data(request, parser, formatter, requested_wps):
 
     text = formatter.linebreak(preformatted=False)
     text += u"""
-    コスト: %(cost)s　耐久力: %(life)s　格闘補正: x%(melee)s倍　入手条件: %(howtoget)s\n
-    """ % { u'cost': j[u'コスト'] or u'???',
-            u'life': j[u'耐久力'] or u'???',
-            u'melee': j[u'格闘補正'] or u'???',
+    コスト: %(cost)s　耐久力: %(life)s　格闘補正: x%(melee)s倍　タイプ: %(type)s　入手条件: %(howtoget)s\n
+    """ % { u'cost': j.get(u'コスト', None) or u'???',
+            u'life': j.get(u'耐久力', None) or u'???',
+            u'melee': j.get(u'格闘補正', None) or u'???',
+            u'type': j.get(u'タイプ', None) or u'???',
             u'howtoget': j.get(u'入手条件', u'') or u'???'}
 
     weapon_names = (j[u'右手武器'], j[u'左手武器'],
