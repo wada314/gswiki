@@ -19,6 +19,7 @@ sys.path.append('/home/shohei/gs3/moin-1.9.8')
 import re
 import json
 import argparse
+import difflib
 
 from MoinMoin.PageEditor import PageEditor
 from MoinMoin.web.contexts import ScriptContext
@@ -78,6 +79,7 @@ WEAPON_ATTRS = {
     u'ロックオン時間',
     u'回復力',
     u'防御力',
+    u'吸引力',
     u'シールド範囲',
     u'最低持続時間',
     u'攻撃範囲',
@@ -129,7 +131,7 @@ def statusMapToAttrs(status_map):
             else:
                 attrs[u'反動ダメージ割合'] = int(value[:-1])
         else:
-            raise Exception('Unknown weapon status key %s' % kv.encode('utf-8'))
+            raise Exception('Unknown weapon status key %s' % key.encode('utf-8'))
     return attrs
 
 def processWeaponPack(j, context, dry_run):
@@ -171,7 +173,8 @@ def processWeaponPack(j, context, dry_run):
         body_pre = WP_PAGE_DEFAULT_BODY_PRE
         body_json = {
             u'名称': wp_name,
-            u'入手条件': u''
+            u'入手条件': u'',
+            u'タイプ': u''
         }
         body_post = WP_PAGE_DEFAULT_BODY_POST
 
@@ -186,7 +189,13 @@ def processWeaponPack(j, context, dry_run):
             page.saveText(output, page.current_rev())
             print u'Processed %s correctly.' % wp_name
         else:
-            print u'(dry_run) Processed %s correctly.' % wp_name
+            differ = difflib.Differ()
+            l = map(lambda s: s.strip(), page.get_body().splitlines())
+            r = map(lambda s: s.strip(), output.splitlines())
+            if l != r:
+                d = u'\n'.join(filter(lambda s: s and s[0] in u'+-?', differ.compare(l, r)))
+                print((u'#### Diff in %s ####' % wp_name).encode('utf-8'))
+                print(d.encode('utf-8'))
     except PageEditor.Unchanged:
         pass
 
@@ -215,7 +224,7 @@ def processWeapon(j, context, is_sub, dry_run):
     diff_dst_json = statusMapToAttrs(status_map)
     if not is_sub and j.get(u'subStatusMap', {}):
         diff_dst_json[u'サブウェポン'] = {
-            u'名称': j[u'subWeaponName'],
+            u'名称': j[u'subWeaponName'].strip(),
             u'レベル': int(j[u'subWeaponLevel']),
         }
 
@@ -254,7 +263,13 @@ def processWeapon(j, context, is_sub, dry_run):
             page.saveText(output, page.current_rev())
             print u'Processed weapon %s correctly.' % weapon_name
         else:
-            print u'(dry_run) Processed weapon %s correctly.' % weapon_name
+            differ = difflib.Differ(charjunk=lambda c:c.isspace())
+            l = map(lambda s: s.strip(), page.get_body().splitlines())
+            r = map(lambda s: s.strip(), output.splitlines())   
+            if l != r:
+                d = u'\n'.join(filter(lambda s: s and s[0] in u'+-?', differ.compare(l, r)))
+                print((u'#### Diff in %s ####' % weapon_name).encode('utf-8'))
+                print(d.encode('utf-8'))
     except PageEditor.Unchanged:
         pass
 
@@ -269,7 +284,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('file', type=file)
-    parser.add_argument('--no-dry-run', dest='no_dry_run', type=bool, default=True)
+    parser.add_argument('--no-dry-run', dest='no_dry_run', type=bool, default=False)
     args = parser.parse_args()
 
     dry_run = not args.no_dry_run

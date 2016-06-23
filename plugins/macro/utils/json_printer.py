@@ -9,7 +9,7 @@ _JSON_NAME_ORDER_LIST = [
     u'キャラクターデータ', u'よろけにくさ', u'ジャンプ上昇力', u'空中ダッシュ初速度',
     u'空中ダッシュ最終速度', u'腕力', u'格闘距離',
     u'コスチューム', u'シンボルチャット',
-    u'ウェポンパック', u'コスト', u'耐久力', u'格闘補正', u'入手条件',
+    u'ウェポンパック', u'コスト', u'耐久力', u'格闘補正', u'タイプ', u'入手条件',
     u'右手武器', u'左手武器', u'サイド武器', u'タンデム武器',
     u'チューン', u'メリット', u'デメリット',
     u'攻撃力', u'攻撃力(爆風)', u'散弾攻撃力', u'吸引力', u'回復力', 
@@ -41,7 +41,7 @@ def print_json(j, **kw):
         return collections.OrderedDict(l)
 
     if kw.get('sort_keys', True):
-        text = json.dumps(j, ensure_ascii=False)
+        text = json.dumps(j, ensure_ascii=False, separators=(u',', u': '))
         j = json.loads(text, object_hook=sort_dict)
 
     return json.dumps(j, ensure_ascii=kw.get('ensure_ascii', False), **kw)

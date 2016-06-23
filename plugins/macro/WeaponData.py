@@ -136,7 +136,7 @@ def create_row(request, j, row, level, formatter, **kw):
         base = weapon.get(u'攻撃力', 0) or weapon.get(u'散弾攻撃力', 0) or weapon.get(u'攻撃力(爆風)', 0)
         total = get_total_damage_str(
             base, float(weapon.get(u'コンボ蓄積値', u'0.0')),
-            int(weapon.get(u'灰ダウン蓄積値', 0)))
+            float(weapon.get(u'灰ダウン蓄積値', 0)))
         row.cells.append(Cell(u'総ダメージ', total, cls=[u'right']))
 
     # Very special case: both 防御力 and 回復力 are existing. (回復エリアシールド).
