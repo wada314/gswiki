@@ -138,10 +138,12 @@ def create_row(request, j, row, level, formatter, **kw):
             base, float(weapon.get(u'コンボ蓄積値', u'0.0')),
             float(weapon.get(u'灰ダウン蓄積値', 0)))
         row.cells.append(Cell(u'総ダメージ', total, cls=[u'right']))
+    else:
+        row.cells.append(None)
 
     # Very special case: both 防御力 and 回復力 are existing. (回復エリアシールド).
     # Add another column in this case.
-    elif u'防御力' in weapon and u'回復力' in weapon:
+    if u'防御力' in weapon and u'回復力' in weapon:
         row.cells.append(Cell(u'防御力', u'%d' % weapon[u'防御力'], cls=[u'right']))
     else:
         row.cells.append(None)
