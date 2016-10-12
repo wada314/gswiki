@@ -68,8 +68,8 @@ def navbar(request, page_number, max_pages, page_uri):
     html = ['<div class="navbar">']
     if page_number > 1:
         html.append('<div class="prevcmt">')
-        html.append('<a href="%s">%s</a>&nbsp;&nbsp;' %
-                (page_uri,_('|&lt;')))
+        html.append('<a href="%s?page_number=%d">%s</a>&nbsp;&nbsp;' %
+                (page_uri,0,_('|&lt;')))
         html.append('<a href="%s?page_number=%d">%s</a>&nbsp;&nbsp;' %
                 (page_uri,page_number-1,_('&lt;&lt;')))
         html.append('</div>')
@@ -123,6 +123,7 @@ def macro_Comments(macro, page_name=u''):
 
         if cmt_per_page:
             page_uri = request.url.split('?')[0]
+            page_url += u'#comment_section'
 
             number_messages = len(files)
             if number_messages % cmt_per_page:
