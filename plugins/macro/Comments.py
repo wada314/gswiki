@@ -123,7 +123,7 @@ def macro_Comments(macro, page_name=u''):
 
         if cmt_per_page:
             page_uri = request.url.split('?')[0]
-            page_url += u'#comment_section'
+            page_uri += u'#comment_section'
 
             number_messages = len(files)
             if number_messages % cmt_per_page:
