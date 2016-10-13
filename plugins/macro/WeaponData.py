@@ -162,6 +162,8 @@ def create_row(request, j, row, level, formatter, **kw):
 
     if u'ロックオン時間' in weapon:
         row.cells.append(Cell(u'ﾛｯｸｵﾝ時間', u'%dF' % weapon[u'ロックオン時間'], cls=[u'right']))
+    elif u'チャージ時間' in weapon:
+        row.cells.append(Cell(u'ﾁｬｰｼﾞ時間', u'%dF' % weapon[u'チャージ時間'], cls=[u'right']))
     else:
         row.cells.append(None)
 
