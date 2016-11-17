@@ -5,6 +5,7 @@ import os
 from utils.table import Table, Row, Cell, TitleRow, TitleCell
 from utils.json_loader import load_json_from_page
 import WeaponData
+import WPData
 from MoinMoin import caching
 
 Dependencies = ['pages']
@@ -48,6 +49,7 @@ def load_wp_to_character_table(request):
 def wp_to_rows(request, formatter, character_name, wp_name):
     output = u''
     wp = load_json_from_page(request, None, wp_name, u'wp') or {}
+    is_xi = WPData.is_xi_wp(request, wp_name)
     
     # First row: WP brief data
     output += formatter.table_row(True, attrs={u'rowclass': u'wpheader'})
@@ -81,7 +83,7 @@ def wp_to_rows(request, formatter, character_name, wp_name):
     side_weapon = wp.get(u'サイド武器', {})
     tandem_weapon = wp.get(u'タンデム武器', {})
 
-    def find_sub_weapon(weapon):
+    def find_sub_weapon(weapon, place_name):
         weapon_json = load_json_from_page(request, None, weapon.get(u'名称', u''), u'weapon') or {}
         leveled_weapon = weapon_json.get(u'レベル', {}).get(u'%d' % weapon.get(u'レベル', 0), {})
         subweapon = leveled_weapon.get(u'サブウェポン', {})
@@ -90,10 +92,13 @@ def wp_to_rows(request, formatter, character_name, wp_name):
         subtrigger = leveled_weapon.get(u'サブトリガー', u'')
         if subtrigger:
             return subtrigger
+        if is_xi:
+            subname = u'クシーバルカン' if place_name == u'サイド' else u'クシーグレネード'
+            return { u'名称': subname, u'レベル': 1 }
         return None
 
-    side_sub_weapon = find_sub_weapon(side_weapon)
-    tandem_sub_weapon = find_sub_weapon(tandem_weapon)
+    side_sub_weapon = find_sub_weapon(side_weapon, u'サイド')
+    tandem_sub_weapon = find_sub_weapon(tandem_weapon, u'タンデム')
 
     def get_weapon_name(weapon):
         if isinstance(weapon, unicode):
