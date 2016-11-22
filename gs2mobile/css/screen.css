@@ -48,6 +48,7 @@ textarea {
     left: 0;
     width: 14em;
     height: auto;
+    overflow: hidden;
 }
 #sidebar h1, #sidebar h2, #sidebar h3, #sidebar h4, #sidebar h5, #sidebar h6, #sidebar h7 {
     font-size: 90%;
