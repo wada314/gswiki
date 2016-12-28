@@ -120,7 +120,11 @@ def statusMapToAttrs(status_map):
         if key in WEAPON_ATTRS:
             attrs[key] = maybeToInt(value)
         elif key == u'リロード性能':
-            value1, value2 = value.split(u'/', 1)
+            if u'/' in value:
+                value1, value2 = value.split(u'/', 1)
+            else:
+                value1 = u'1'
+                value2 = value
             attrs[u'リロード分母'] = maybeToInt(value2)
             if value1 == u'全弾':
                 attrs[u'リロード分子'] = u'all'
@@ -163,7 +167,7 @@ def processWeaponPack(j, context, dry_run):
     json_diff = {
         u'コスト': j.get(u'cost', 0),
         u'耐久力': j.get(u'hitPoint', 0),
-        u'格闘補正': j.get(u'grappleUp', 1.0),
+        u'格闘補正': float(j.get(u'grappleUp', 1.0)),
         u'右手武器': getBriefWeaponJson(w_map.get(u'right', {})),
         u'左手武器': getBriefWeaponJson(w_map.get(u'left', {})),
         u'サイド武器': getBriefWeaponJson(w_map.get(u'side', {})),

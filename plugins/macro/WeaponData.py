@@ -120,7 +120,10 @@ def create_row(request, j, row, level, formatter, **kw):
         # We don't need "(爆風)" annotation in display, isn't it?
         row.cells.append(Cell(u'攻撃力', power, cls=[u'right']))
     elif u'回復力' in weapon:
-        row.cells.append(Cell(u'回復力', u'%d' % weapon[u'回復力'], cls=[u'right']))
+        power = u'%d' % weapon[u'回復力']
+        if u'分裂数' in weapon:
+            power += u'x%d' % weapon[u'分裂数']
+        row.cells.append(Cell(u'回復力', u'%d' % power, cls=[u'right']))
     elif u'防御力' in weapon:
         row.cells.append(Cell(u'防御力', u'%d' % weapon[u'防御力'], cls=[u'right']))
     elif u'吸引力' in weapon:
