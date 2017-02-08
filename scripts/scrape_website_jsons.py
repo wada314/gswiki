@@ -35,7 +35,8 @@ driver.find_element_by_css_selector('div[data-url="player/player_top.html"]').cl
 driver.get('http://sp3.gunslinger-stratos.net/page/chara/chara_select.html')
 chara_num = len(driver.find_elements_by_css_selector('#chara-list-select>li'))
 chara_ids = [i for i in range(1, 23)] + [24, 25, 26, 27, 28, 29]
-#print chara_ids
+print chara_ids
+print chara_num
 assert(len(chara_ids) == chara_num)
 
 for i in chara_ids:

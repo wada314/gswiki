@@ -90,6 +90,7 @@ WEAPON_ATTRS = {
     u'シールド展開時間',
     u'効果時間',
     u'チャージ時間',
+    u'点火時間',
 }
 # Special cases need to be handled:
 #    "RELO": "リロード性能", It's frac (string) generally. e.g. "4/300F"
