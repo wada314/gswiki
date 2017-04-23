@@ -10,7 +10,7 @@ Dependencies = ['pages']
 
 generates_headings = True
 
-def macro_CharacterWPs(macro, character_name=None):
+def macro_CharacterWPs(macro, prefix=u'', character_name=None):
     request = macro.request
     formatter = macro.formatter
     parser = macro.parser
@@ -20,10 +20,10 @@ def macro_CharacterWPs(macro, character_name=None):
     else:
         parser = None
 
-    return create_wp_list(macro, request, parser, formatter, character_name)
+    return create_wp_list(macro, request, parser, formatter, prefix, character_name)
 
-def create_wp_list(macro, request, parser, formatter, character_name):
-    j = load_json_from_page(request, parser, character_name, u'character')
+def create_wp_list(macro, request, parser, formatter, prefix, character_name):
+    j = load_json_from_page(request, parser, prefix + character_name, u'character')
     if not j:
         return 'No WP(s) are defined for this character.'
 
@@ -31,6 +31,8 @@ def create_wp_list(macro, request, parser, formatter, character_name):
     text = u''
     last_parser = macro.parser
     for wp_name in j:
-        include_args = u'%(wp_name)s, "%(wp_name)s", 3, from="=== %(wp_name)s ===", to="==== コメント ===="' % { u'wp_name': wp_name }
+        include_args = u'%(prefix)s%(wp_name)s, "%(wp_name)s", 3, from="=== %(wp_name)s ===", to="==== コメント ===="' % {
+            u'wp_name': wp_name,
+            u'prefix': prefix }
         text += Include.execute(macro, include_args)
     return text

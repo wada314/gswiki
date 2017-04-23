@@ -35,9 +35,9 @@ def load_json_text_from_page(request, parser, page_name, parser_name):
 
     return extracting_formatter.get_extracted()
 
-def _load_all_jsons(request):
+def _load_all_jsons(request, prefix=u''):
     character_names = load_json_from_page(
-        request, None, u'CharacterList', u'characters') or {}
+        request, None, prefix + u'CharacterList', u'characters') or {}
     wp_names = set()
     weapon_names = set()
     weapon_name_queue = []
@@ -52,13 +52,13 @@ def _load_all_jsons(request):
     for c_name in character_names:
         # make sure to be an unicode object
         c_name = unicode(c_name) if c_name else u'BadCharacterName'
-        c = load_json_from_page(request, None, c_name, u'character') or {}
+        c = load_json_from_page(request, None, prefix + c_name, u'character') or {}
         characters.append(c)
         wp_names.update(c.get(u'ウェポンパック', []) or [])
 
     for wp_name in wp_names:
         wp_name = unicode(wp_name) if wp_name else u'BadWPName'
-        wp = load_json_from_page(request, None, wp_name, u'wp') or {}
+        wp = load_json_from_page(request, None, prefix + wp_name, u'wp') or {}
         wps.append(wp)
         for equip_name in [u'右手武器', u'左手武器',
                            u'サイド武器', u'タンデム武器']:
@@ -69,7 +69,7 @@ def _load_all_jsons(request):
     while weapon_name_queue:
         w_name = weapon_name_queue.pop()
         w_name = unicode(w_name) if w_name else u'BadWeaponName'
-        weapon = load_json_from_page(request, None, w_name, u'weapon') or {}
+        weapon = load_json_from_page(request, None, prefix + w_name, u'weapon') or {}
 
         for leveled_weapon in weapon.get(u'レベル', {}).itervalues():
             if u'サブウェポン' in leveled_weapon:
@@ -112,12 +112,12 @@ def load_json_from_page(request, parser, page_name, parser_name):
 
     return j or None
 
-def load_all_jsons(request):
+def load_all_jsons(request, prefix=u''):
     cache = caching.CacheEntry(
-        request, 'gswiki-alljsons', 'json', 'wiki',
+        request, 'gswiki-alljsons-%s' % (prefix.encode('utf-8')), 'json', 'wiki',
         use_pickle=True)
     if cache.needsUpdate(os.path.join(request.cfg.data_dir, 'edit-log')):
-        j = _load_all_jsons(request)
+        j = _load_all_jsons(request, prefix)
         cache.update(j)
     else:
         j = cache.content()

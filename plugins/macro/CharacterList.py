@@ -5,15 +5,15 @@ from utils.json_loader import load_json_from_page
 
 Dependencies = ['pages']
 
-def macro_CharacterList(macro, _trailing_args=[]):
+def macro_CharacterList(macro, prefix=u'', _trailing_args=[]):
     request = macro.request
     formatter = macro.formatter
 
-    characters = get_character_list(request) or []
+    characters = get_character_list(request, prefix) or []
     text = formatter.bullet_list(True)
     for c in characters:
         text += formatter.listitem(True)
-        text += formatter.pagelink(True, c)
+        text += formatter.pagelink(True, prefix + c)
         text += formatter.text(c)
         text += formatter.pagelink(False)
         text += formatter.listitem(False)
@@ -21,4 +21,4 @@ def macro_CharacterList(macro, _trailing_args=[]):
     return text
 
 def get_character_list(request):
-    return load_json_from_page(request, None, u'CharacterList', u'characters')
+    return load_json_from_page(request, None, prefix + u'CharacterList', u'characters')
