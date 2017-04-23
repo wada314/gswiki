@@ -15,7 +15,7 @@ def macro_CharacterDataList(macro, prefix=u'', _trailing_args=[]):
 def create_character_data_list(request, formatter, prefix):
     table = Table()
     
-    characters = load_json_from_page(request, prefix, None, u'CharacterList', u'characters') or []
+    characters = load_json_from_page(request, None, prefix + u'CharacterList', u'characters') or []
     header_row = TitleRow()
     newline = formatter.linebreak(preformatted=False)
     header_row.cells.append(TitleCell(u'キャラクター', formatted=True, cls=['center']))
@@ -28,7 +28,7 @@ def create_character_data_list(request, formatter, prefix):
     table.rows.append(header_row)
 
     for character_name in characters:
-        c = load_json_from_page(request, prefix, None, character_name, u'character') or {}
+        c = load_json_from_page(request, None, prefix + character_name, u'character') or {}
         data = c.get(u'キャラクターデータ', {})
         row = Row()
         row.cells.append(Cell(None, character_name, cls=['center']))

@@ -20,5 +20,5 @@ def macro_CharacterList(macro, prefix=u'', _trailing_args=[]):
     text += formatter.bullet_list(False)
     return text
 
-def get_character_list(request):
+def get_character_list(request, prefix):
     return load_json_from_page(request, None, prefix + u'CharacterList', u'characters')

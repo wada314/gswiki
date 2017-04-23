@@ -28,9 +28,11 @@ from MoinMoin.Page import RootPage
 
 from macro.utils import json_printer, json_loader
 
+PAGE_PREFIX = u'sigma/'
+
 WP_PAGE_DEFAULT_BODY_PRE = u'''
 === @PAGE@ ===
-<<WPData>>
+<<WPData,"sigma/">>
 
 ==== 解説 ====
 
@@ -47,7 +49,7 @@ WP_PAGE_DEFAULT_BODY_POST = u'''
 
 WEAPON_PAGE_DEFAULT_BODY_PRE = u'''
 === @PAGE@ ===
-<<WeaponData>>
+<<WeaponData,"sigma/">>
 
 ==== 解説 ====
 
@@ -144,7 +146,7 @@ def processWeaponPack(j, context, dry_run):
     wp_name = j.get(u'weaponPackName', None)
     if not wp_name:
         return
-    page = PageEditor(context, wp_name)
+    page = PageEditor(context, PAGE_PREFIX + wp_name)
     body_pre = u''
     body_json = {}
     body_post = u''
@@ -193,14 +195,14 @@ def processWeaponPack(j, context, dry_run):
     try:
         if not dry_run:
             page.saveText(output, page.current_rev())
-            print u'Processed %s correctly.' % wp_name
+            print u'Processed %s correctly.' % (PAGE_PREFIX + wp_name)
         else:
             differ = difflib.Differ()
             l = map(lambda s: s.strip(), page.get_body().splitlines())
             r = map(lambda s: s.strip(), output.splitlines())
             if l != r:
                 d = u'\n'.join(filter(lambda s: s and s[0] in u'+-?', differ.compare(l, r)))
-                print((u'#### Diff in %s ####' % wp_name).encode('utf-8'))
+                print((u'#### Diff in %s ####' % (PAGE_PREFIX + wp_name)).encode('utf-8'))
                 print(d.encode('utf-8'))
     except PageEditor.Unchanged:
         pass
@@ -213,7 +215,7 @@ def processWeapon(j, context, is_sub, dry_run):
         print u'Weapon %s is missing critical params.' % weapon_name
         return
 
-    page = PageEditor(context, weapon_name)
+    page = PageEditor(context, PAGE_PREFIX + weapon_name)
     body_pre = u''
     body_json = {}
     body_post = u''
@@ -267,14 +269,14 @@ def processWeapon(j, context, is_sub, dry_run):
     try:
         if not dry_run:
             page.saveText(output, page.current_rev())
-            print u'Processed weapon %s correctly.' % weapon_name
+            print u'Processed weapon %s correctly.' % (PAGE_PREFIX + weapon_name)
         else:
             differ = difflib.Differ(charjunk=lambda c:c.isspace())
             l = map(lambda s: s.strip(), page.get_body().splitlines())
             r = map(lambda s: s.strip(), output.splitlines())   
             if l != r:
                 d = u'\n'.join(filter(lambda s: s and s[0] in u'+-?', differ.compare(l, r)))
-                print((u'#### Diff in %s ####' % weapon_name).encode('utf-8'))
+                print((u'#### Diff in %s ####' % (PAGE_PREFIX + weapon_name)).encode('utf-8'))
                 print(d.encode('utf-8'))
     except PageEditor.Unchanged:
         pass
