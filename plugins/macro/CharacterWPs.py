@@ -19,7 +19,7 @@ def macro_CharacterWPs(macro, prefix=u'', character_name=None):
         pagename = macro.formatter.page.page_name
         if pagename.startswith(prefix):
             pagename = pagename[len(prefix):]
-        character_name = page_name
+        character_name = pagename
     else:
         parser = None
 
