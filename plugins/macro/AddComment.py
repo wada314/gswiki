@@ -51,11 +51,11 @@ from comment_utils import get_cfg, get_input, write_comment, notify_subscribers
 
 # Auxiliary class:
 class AddComment:
-    def __init__(self, macro ):
+    def __init__(self, macro, page_name):
         self.macro = macro
-        self.page = macro.request.page
+        self.page = Page(macro.request, page_name) if page_name else macro.request.page
         self.user = macro.request.user
-        self.page_name = macro.formatter.page.page_name
+        self.page_name = page_name if page_name else macro.formatter.page.page_name
 
         self.msg = ''
         self.reset_comment()
@@ -246,5 +246,5 @@ class AddComment:
 
 
 # Macro function:
-def macro_AddComment(macro):
-    return AddComment(macro).renderInPage()
+def macro_AddComment(macro, page_name=u''):
+    return AddComment(macro, page_name).renderInPage()
