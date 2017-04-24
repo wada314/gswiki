@@ -13,7 +13,10 @@ def macro_CharacterData(macro, prefix=u'', character_name=None):
     parser = macro.parser
 
     if not character_name:
-        character_name = macro.formatter.page.page_name
+        pagename = macro.formatter.page.page_name
+        if pagename.startswith(prefix):
+            pagename = pagename[len(prefix):]
+        character_name = pagename
     else:
         parser = None
 

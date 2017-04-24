@@ -15,7 +15,10 @@ def macro_WeaponData(macro, prefix=u'', _trailing_args=[]):
     requested_weapons = _trailing_args
     if not requested_weapons:
         # assume the caller requested to show a weapon data of the current page.
-        requested_weapons = [macro.formatter.page.page_name]
+        pagename = macro.formatter.page.page_name
+        if pagename.startswith(prefix):
+            pagename = pagename[len(prefix):]
+        requested_weapons = [pagename]
     else:
         parser = None
 

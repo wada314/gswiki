@@ -14,7 +14,10 @@ def macro_WPData(macro, prefix=u'', _trailing_args=[]):
     requested_wps = _trailing_args
     if not requested_wps:
         # assume the caller requested to show a weapon data of the current page.
-        requested_wps = [macro.formatter.page.page_name]
+        pagename = macro.formatter.page.page_name
+        if pagename.startswith(prefix):
+            pagename = pagename[len(prefix):]
+        requested_wps = [pagename]
     else:
         parser = None
 
@@ -34,7 +37,7 @@ def create_wp_data(request, parser, formatter, prefix, requested_wps):
 
     text = formatter.linebreak(preformatted=False)
     text += u"""
-    コスト: %(cost)s　耐久力: %(life)s　格闘補正: x%(melee)s倍　タイプ: %(type)s　入手条件: %(howtoget)s\n
+    コスト: %(cost)s　耐久力: %(life)s　格闘補正: x%(melee)s倍　タイプ: %(type)s\n
     """ % { u'cost': j.get(u'コスト', None) or u'???',
             u'life': j.get(u'耐久力', None) or u'???',
             u'melee': j.get(u'格闘補正', None) or u'???',

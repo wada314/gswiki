@@ -31,8 +31,8 @@ from macro.utils import json_printer, json_loader
 PAGE_PREFIX = u'sigma/'
 
 WP_PAGE_DEFAULT_BODY_PRE = u'''
-=== @PAGE@ ===
-<<WPData,"sigma/">>
+=== %(名称)s ===
+<<WPData("sigma/")>>
 
 ==== 解説 ====
 
@@ -48,8 +48,8 @@ WP_PAGE_DEFAULT_BODY_POST = u'''
 '''
 
 WEAPON_PAGE_DEFAULT_BODY_PRE = u'''
-=== @PAGE@ ===
-<<WeaponData,"sigma/">>
+=== %(名称)s ===
+<<WeaponData("sigma/")>>
 
 ==== 解説 ====
 
@@ -99,9 +99,9 @@ WEAPON_ATTRS = {
 #    "RELO": "リロード性能", It's frac (string) generally. e.g. "4/300F"
 #    "DAMA": "反動", It may be a string like "30%" or an integer like "20".
 RE_NUMBER = re.compile(ur'^[0-9]+$')
-RE_DISTANCE = re.compile(ur'^[0-9]+(?:\.[0-9]+)?m$')
-RE_FRAME_NUMBER = re.compile(ur'^[0-9]+F$')
-RE_FRAME_NUMBER_TEXT = re.compile(ur'^[0-9]+フレーム$')
+RE_DISTANCE = re.compile(ur'^[0-9]+(?:\.[0-9]+)?\s*m$')
+RE_FRAME_NUMBER = re.compile(ur'^[0-9]+\s*F$')
+RE_FRAME_NUMBER_TEXT = re.compile(ur'^[0-9]+\s*フレーム$')
 
 def statusMapToAttrs(status_map):
 
@@ -128,9 +128,11 @@ def statusMapToAttrs(status_map):
         elif key == u'リロード性能':
             if u'/' in value:
                 value1, value2 = value.split(u'/', 1)
+                value1 = value1.strip()
+                value2 = value2.strip()
             else:
                 value1 = u'1'
-                value2 = value
+                value2 = value2.strip()
             attrs[u'リロード分母'] = maybeToInt(value2)
             if value1 == u'全弾':
                 attrs[u'リロード分子'] = u'all'
@@ -181,12 +183,12 @@ def processWeaponPack(j, context, dry_run):
     }
 
     if not body_json:
-        body_pre = WP_PAGE_DEFAULT_BODY_PRE
         body_json = {
             u'名称': wp_name,
             u'入手条件': u'',
             u'タイプ': u''
         }
+        body_pre = WP_PAGE_DEFAULT_BODY_PRE % body_json
         body_post = WP_PAGE_DEFAULT_BODY_POST
 
     body_json.update(json_diff)
@@ -240,13 +242,13 @@ def processWeapon(j, context, is_sub, dry_run):
         }
 
     if not body_json:
-        body_pre = WEAPON_PAGE_DEFAULT_BODY_PRE
-        body_post = WEAPON_PAGE_DEFAULT_BODY_POST
         body_json = {
             u'名称': weapon_name,
             u'レベル': {},
             u'弾種': j.get(u'subBulletTypeName' if is_sub else u'bulletTypeName', u''),
         }
+        body_pre = WEAPON_PAGE_DEFAULT_BODY_PRE % body_json
+        body_post = WEAPON_PAGE_DEFAULT_BODY_POST
 
     levels_json = body_json.get(u'レベル', {})
     if not levels_json:
