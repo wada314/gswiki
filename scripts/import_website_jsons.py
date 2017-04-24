@@ -72,6 +72,7 @@ WEAPON_ATTRS = {
     u'攻撃力',
     u'散弾攻撃力',
     u'攻撃力(爆風)',
+    u'覚醒攻撃力',
     u'連射間隔',
     u'装填数',
     u'射程距離',
@@ -122,6 +123,8 @@ def statusMapToAttrs(status_map):
             continue
         if key in WEAPON_ATTRS:
             attrs[key] = maybeToInt(value)
+        elif key == u'射撃間隔':
+            attrs[u'連射間隔'] = maybeToInt(value)
         elif key == u'リロード性能':
             if u'/' in value:
                 value1, value2 = value.split(u'/', 1)
@@ -202,7 +205,7 @@ def processWeaponPack(j, context, dry_run):
             r = map(lambda s: s.strip(), output.splitlines())
             if l != r:
                 d = u'\n'.join(filter(lambda s: s and s[0] in u'+-?', differ.compare(l, r)))
-                print((u'#### Diff in %s ####' % (PAGE_PREFIX + wp_name)).encode('utf-8'))
+                print((u'#### Diff in wp %s ####' % (PAGE_PREFIX + wp_name)).encode('utf-8'))
                 print(d.encode('utf-8'))
     except PageEditor.Unchanged:
         pass
@@ -276,7 +279,7 @@ def processWeapon(j, context, is_sub, dry_run):
             r = map(lambda s: s.strip(), output.splitlines())   
             if l != r:
                 d = u'\n'.join(filter(lambda s: s and s[0] in u'+-?', differ.compare(l, r)))
-                print((u'#### Diff in %s ####' % (PAGE_PREFIX + weapon_name)).encode('utf-8'))
+                print((u'#### Diff in weapon %s ####' % (PAGE_PREFIX + weapon_name)).encode('utf-8'))
                 print(d.encode('utf-8'))
     except PageEditor.Unchanged:
         pass

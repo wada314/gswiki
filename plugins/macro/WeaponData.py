@@ -110,6 +110,8 @@ def create_row(request, prefix, j, row, level, formatter, **kw):
         power = u'%d' % weapon[u'攻撃力']
         if u'分裂数' in weapon:
             power += u'x%d' % weapon[u'分裂数']
+        if u'覚醒攻撃力' in weapon:
+            power += u'(%d)' % weapon[u'覚醒攻撃力']
         row.cells.append(Cell(u'攻撃力', power, cls=[u'right']))
     elif u'散弾攻撃力' in weapon:
         power = u'%dx%s' % (weapon[u'散弾攻撃力'], weapon.get(u'分裂数', u'?'))
@@ -134,13 +136,17 @@ def create_row(request, prefix, j, row, level, formatter, **kw):
     else:
         row.cells.append(None)
 
-
     if ((u'コンボ蓄積値' in weapon and u'灰ダウン蓄積値' in weapon)
         and (u'攻撃力' in weapon or u'散弾攻撃力' in weapon or u'攻撃力(爆風)' in weapon)):
         base = weapon.get(u'攻撃力', 0) or weapon.get(u'散弾攻撃力', 0) or weapon.get(u'攻撃力(爆風)', 0)
         total = get_total_damage_str(
             base, float(weapon.get(u'コンボ蓄積値', u'0.0')),
             float(weapon.get(u'灰ダウン蓄積値', 0)))
+        if u'覚醒攻撃力' in weapon:
+            total2 = get_total_damage_str(float(weapon.get(u'覚醒攻撃力', 0)),
+                                          float(weapon.get(u'コンボ蓄積値', u'0.0')),
+                                          float(weapon.get(u'灰ダウン蓄積値', 0)))
+            total += u'(%s)' % total2
         row.cells.append(Cell(u'総ダメージ', total, cls=[u'right']))
     else:
         row.cells.append(None)

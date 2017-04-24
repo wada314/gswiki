@@ -46,14 +46,14 @@ for i in chara_ids:
     driver.get('http://sp3.gunslinger-stratos.net/page/chara/weapon/weapon_pack_list.html?chara_type=%d' % i)
     wps1 = driver.execute_script('return JSON.stringify(weapon_pack_list)')
 
-    time.sleep(1)
-    driver.get('http://sp3.gunslinger-stratos.net/page/shop/weapon_sale_top.html?chara_type=%d' % i)
-    wps2 = driver.execute_script('return JSON.stringify(weapon_pack_list)')
+#    time.sleep(1)
+#    driver.get('http://sp3.gunslinger-stratos.net/page/shop/weapon_sale_top.html?chara_type=%d' % i)
+#    wps2 = driver.execute_script('return JSON.stringify(weapon_pack_list)')
 
-    time.sleep(1)
-    driver.get('http://sp3.gunslinger-stratos.net/page/etc/gschannel/chara_weapon.html?chara_type=%d' % i)
-    wps3 = driver.execute_script('return JSON.stringify(weapon_pack_list)')
+#    time.sleep(1)
+#    driver.get('http://sp3.gunslinger-stratos.net/page/etc/gschannel/chara_weapon.html?chara_type=%d' % i)
+#    wps3 = driver.execute_script('return JSON.stringify(weapon_pack_list)')
 
     print wps1.encode('utf-8')
-    print wps2.encode('utf-8')
-    print wps3.encode('utf-8')
+#    print wps2.encode('utf-8')
+#    print wps3.encode('utf-8')
