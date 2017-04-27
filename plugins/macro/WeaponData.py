@@ -252,7 +252,7 @@ def create_row(request, prefix, j, row, level, formatter, **kw):
         has_subtrigger = True
         subweapon = weapon[u'サブウェポン']
         note = (formatter.text(u'サブ: ')
-                + formatter.pagelink(True, subweapon[u'名称'])
+                + formatter.pagelink(True, prefix + subweapon[u'名称'])
                 + formatter.text(u'%s Lv.%d' % (subweapon[u'名称'], subweapon[u'レベル']))
                 + formatter.pagelink(False))
         notes.append(note)
@@ -261,13 +261,13 @@ def create_row(request, prefix, j, row, level, formatter, **kw):
         notes.append(formatter.text(u'サブ: %s' % weapon[u'サブトリガー']))
     if kw.get('subweapon_in_row', False) and kw.get('is_xi_side', False) and not has_subtrigger:
         note = (formatter.text(u'サブ: ')
-                + formatter.pagelink(True, u'クシーバルカン')
+                + formatter.pagelink(True, prefix + u'クシーバルカン')
                 + formatter.text(u'%s Lv.%d' % (u'クシーバルカン', 1))
                 + formatter.pagelink(False))
         notes.append(note)
     if kw.get('subweapon_in_row', False) and kw.get('is_xi_tandem', False) and not has_subtrigger:
         note = (formatter.text(u'サブ: ')
-                + formatter.pagelink(True, u'クシーグレネード')
+                + formatter.pagelink(True, prefix + u'クシーグレネード')
                 + formatter.text(u'%s Lv.%d' % (u'クシーグレネード', 1))
                 + formatter.pagelink(False))
         notes.append(note)
