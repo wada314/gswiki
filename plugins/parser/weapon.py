@@ -7,7 +7,7 @@ class Parser:
         pass
 
     def format(self, formatter, **kw):
-        """Actually do not show nothing for the data description itself.
+        """Actually do not show anything for the data description itself.
         Use <<WeaponData>> macro to show the weapon data.
         """
         pass
