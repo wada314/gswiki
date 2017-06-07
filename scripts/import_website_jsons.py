@@ -145,7 +145,7 @@ def statusMapToAttrs(status_map):
             if RE_NUMBER.match(value):
                 attrs[u'反動ダメージ量'] = maybeToInt(value)
             else:
-                attrs[u'反動ダメージ割合'] = int(value[:-1])
+                attrs[u'反動ダメージ割合'] = maybeToInt(value)
         else:
             raise Exception('Unknown weapon status key %s' % key.encode('utf-8'))
     return attrs
