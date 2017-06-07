@@ -143,7 +143,7 @@ def statusMapToAttrs(status_map):
             if RE_NUMBER.match(value):
                 attrs[u'反動ダメージ量'] = maybeToInt(value)
             else:
-                attrs[u'反動ダメージ割合'] = RE_FEEDBACK_DAMAGE.match(value).group(1)
+                attrs[u'反動ダメージ割合'] = int(RE_FEEDBACK_DAMAGE.match(value).group(1))
         else:
             raise Exception('Unknown weapon status key %s' % key.encode('utf-8'))
     return attrs
