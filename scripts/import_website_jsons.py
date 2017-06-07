@@ -102,7 +102,7 @@ RE_NUMBER = re.compile(ur'^[0-9]+$')
 RE_DISTANCE = re.compile(ur'^[0-9]+(?:\.[0-9]+)?\s*m$')
 RE_FRAME_NUMBER = re.compile(ur'^[0-9]+\s*F$')
 RE_FRAME_NUMBER_TEXT = re.compile(ur'^[0-9]+\s*フレーム$')
-RE_FEEDBACK_DAMAGE = re.compile(ur'^回復量の([0-9])+%$')
+RE_FEEDBACK_DAMAGE = re.compile(ur'^回復量の([0-9]+%)$')
 
 def statusMapToAttrs(status_map):
 
