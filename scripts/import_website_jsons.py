@@ -265,8 +265,6 @@ def processWeapon(j, context, is_sub, dry_run):
     # clenup legacy attrs
     if u'爆発半径' in dst_json:
         del dst_json[u'爆発半径']
-    if u'発射準備時間' in dst_json:
-        del dst_json[u'発射準備時間']
 
     output = (body_pre + u'\n'
               + json_printer.print_json(body_json, indent=2) + u'\n'
