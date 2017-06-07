@@ -180,7 +180,7 @@ def create_row(request, prefix, j, row, level, formatter, **kw):
     elif u'点火時間' in weapon:
         row.cells.append(Cell(u'点火時間', u'%dF' % weapon[u'点火時間'], cls=[u'right']))
     elif u'発射準備時間' in weapon:
-        row.cells.append(Cell(u'発射準備時間', u'%dF' % weapon[u'点火時間'], cls=[u'right']))
+        row.cells.append(Cell(u'発射準備時間', u'%dF' % weapon[u'発射準備時間'], cls=[u'right']))
     else:
         row.cells.append(None)
 
