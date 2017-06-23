@@ -65,7 +65,7 @@ def wp_to_rows(request, formatter, character_name, wp_name, prefix=u''):
     output += formatter.table_row(True, attrs={u'rowclass': u'wpheader'})
     output += formatter.table_cell(True, colspan=4)
     
-    output += formatter.pagelink(True, wp_name)
+    output += formatter.pagelink(True, prefix + wp_name)
     output += formatter.text(u'%s: %s' % (character_name, wp_name))
     output += formatter.pagelink(False)
     output += formatter.linebreak(preformatted=False)
@@ -145,7 +145,7 @@ def wp_to_rows(request, formatter, character_name, wp_name, prefix=u''):
 
     if side_sub_weapon: 
         output += formatter.table_cell(True) + get_weapon_link(side_sub_weapon, prefix) + formatter.table_cell(False)
-    if tandem_sub_weapon: 
+    if tandem_sub_weapon:
         output += formatter.table_cell(True) + get_weapon_link(tandem_sub_weapon, prefix) + formatter.table_cell(False)
     output += formatter.table_row(False)
 
