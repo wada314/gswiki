@@ -141,6 +141,6 @@ def get_tune_table(j, formatter):
     text += formatter.table(False)
     return text
 
-def is_xi_wp(request, wp_name):
-    xi_json = load_json_from_page(request, None, u'ξ（クシー）988', u'character') or {}
+def is_xi_wp(request, wp_name, prefix=u''):
+    xi_json = load_json_from_page(request, None, prefix + u'ξ（クシー）988', u'character') or {}
     return wp_name in xi_json.get(u'ウェポンパック', [])
