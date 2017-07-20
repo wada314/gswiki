@@ -86,7 +86,7 @@ def get_leveled_weapon_and_subweapon_rows(request, prefix, j, formatter, name, l
         # fill empty columns so that this row does not be shorter than the other rows
         subrow.cells.extend([Cell()] * (len(row.cells) - 2))
         return row, subrow
-    elif is_xi_wp(request, wp_name) and place_name in [u'サイド', u'タンデム']:
+    elif is_xi_wp(request, wp_name, prefix) and place_name in [u'サイド', u'タンデム']:
         subname = u'クシーバルカン' if place_name == u'サイド' else u'クシーグレネード'
         subweapon_json = load_json_from_page(request, None, prefix + subname, u'weapon') or {}
         WeaponData.create_row(request, prefix, subweapon_json, subrow, 1, formatter,
