@@ -81,7 +81,6 @@ WEAPON_ATTRS = {
     u'発射準備時間',
     u'ロックオン時間',
     u'回復力',
-    u'防御力',
     u'吸引力',
     u'シールド範囲',
     u'最低持続時間',
@@ -103,6 +102,7 @@ RE_DISTANCE = re.compile(ur'^[0-9]+(?:\.[0-9]+)?\s*m$')
 RE_FRAME_NUMBER = re.compile(ur'^[0-9]+\s*F$')
 RE_FRAME_NUMBER_TEXT = re.compile(ur'^[0-9]+\s*フレーム$')
 RE_FEEDBACK_DAMAGE = re.compile(ur'^回復量の([0-9]+)%$')
+RE_SHIELD_TEXT = re.compile(ur'"被ダメージを([0-9]+)%に軽減"')
 
 def statusMapToAttrs(status_map):
 
@@ -144,6 +144,11 @@ def statusMapToAttrs(status_map):
                 attrs[u'反動ダメージ量'] = maybeToInt(value)
             else:
                 attrs[u'反動ダメージ割合'] = int(RE_FEEDBACK_DAMAGE.match(value).group(1))
+        elif key == u'防御力':
+            if RE_NUMBER.match(value):
+                attrs[u'防御力'] = maybeToInt(value)
+            else:
+                attrs[u'防御力'] = int(RE_SHIELD_TEXT.match(value).group(1))
         else:
             raise Exception('Unknown weapon status key %s' % key.encode('utf-8'))
     return attrs
