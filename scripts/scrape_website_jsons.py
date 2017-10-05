@@ -30,13 +30,13 @@ driver.find_element_by_name('password').submit()
 
 time.sleep(3.0)
 #driver.find_element_by_css_selector('.orange').click()
-driver.find_element_by_css_selector('div[data-url="player/player_top.html"]').click()
+driver.find_element_by_css_selector('div[data-url="player/player_top.html"] div.text').click()
 
 time.sleep(3.0)
 driver.get('http://sp3.gunslinger-stratos.net/page/chara/chara_select.html')
 time.sleep(3.0)
 chara_num = len(driver.find_elements_by_css_selector('#chara-list-select>li'))
-chara_ids = [i for i in range(1, 23)] + [24, 25, 26, 27, 28, 29]
+chara_ids = [i for i in range(1, 30)]
 #print chara_ids
 #print chara_num
 assert(len(chara_ids) == chara_num)
