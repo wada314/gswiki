@@ -237,6 +237,8 @@ def create_row(request, prefix, j, row, level, formatter, **kw):
         row.cells.append(Cell(u'攻撃範囲', u'%.1fm' % weapon[u'攻撃範囲'], cls=[u'right']))
     elif u'シールド範囲' in weapon:
         row.cells.append(Cell(u'ｼｰﾙﾄﾞ範囲', u'%dm' % weapon[u'シールド範囲'], cls=[u'right']))
+    elif u'効果範囲' in weapon:
+        row.cells.append(Cell(u'効果範囲', u'%dm' % weapon[u'爆発範囲'], cls=[u'right']))
     elif u'回復範囲' in weapon:
         row.cells.append(Cell(u'回復範囲', u'%dm' % weapon[u'回復範囲'], cls=[u'right']))
     elif u'弾薬回復範囲' in weapon:
